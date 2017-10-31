@@ -12,11 +12,42 @@ Because the world might be focusing on some regions more than others, this unequ
 # Research questions
 A list of research questions you would like to address during the project. 
 
+1. Country-specific conflicts
+2. Country-specific Twitter text content
+3. Check for generalized, globally existing biases
+
 # Dataset
 List the dataset(s) you want to use, and some ideas on how do you expect to get, manage, process and enrich it/them. Show us you've read the docs and some examples, and you've a clear idea on what to expect. Discuss data size and format if relevant.
 
-# A list of internal milestones up until project milestone 2
-Add here a sketch of your planning for the next project milestone.
+1. UCDP
 
-# Questions for TAa
+ * Get date and location for conflicts around the world
+ * Do a region-based aggregation (to reduce the amount of data to handle)
+
+2. GDELT (v2.0)
+
+ * Get published articles' by theme - related to conflict
+ * Find the regions they focus on
+ * Do a region-based aggregation (to reduce the amount of data to handle)
+
+3. Twitter
+
+ * Get Tweets by theme - related to conflict
+ * Find the regions they focus on
+ * Do a region-based aggregation (to reduce the amount of data to handle)
+
+After we get all the above information from the target datasets, we just use the region-based aggregations for statistical analysis.
+
+# A list of internal milestones up until project milestone 2
+
+1. Get raw data for all the datasets and handle missing (or incomplete) information
+2. Get GDELT and Twitter data organized by theme
+3. Get GDELT and Twitter data's region of focus
+4. Prune unnecessary data from all datasets
+5. For each dataset, organize data by region
+6. Do exploratory analysis based on region equality
+
+# Questions for TAs
 Add here some questions you have for us, in general or project-specific.
+
+1. Does the Twitter dataset contain dates?
