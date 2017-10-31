@@ -10,19 +10,20 @@ Because the world might be focusing on some regions more than others, this unequ
 # Research questions
 The following are the research questions that we would like to address:
 
-1. *Region-specific conflicts* - Which are the conflicts that have taken place in each region?
-2. *Region-specific Twitter text content* - Find the Tweets referring to conflicts, and identify the region where they took place.
-3. *Check for generalized, globally existing biases* - Is the information proliferation different depending on where the conflicts take place? Do these biases change or evolve in time?
+1. **Region-specific conflicts**
+ * Which conflicts take place in each region
+2. **Region-specific Twitter text content**
+ * Find Tweets related with conflicts and identify the region they are referring to.
+3. **Check for generalized, globally existing biases**
+ * Is the information proliferation different depending on where the conflicts take place? If so, do these biases change or evolve over time?
 
 # Dataset
-The following are the three datasets that we would like to use.
+The following are the three datasets that we would like to use:
 
 1. UCDP
 
  * Get date and location for conflicts around the world
  * Do a region-based aggregation (to reduce the amount of data to handle)
-
-TODO - Mention the size of the GDELT dataset? It's very large. Also, I don't know if we can use the v2.0 or we need to stick to the 'normal'. Twitter one might be very large as well. They do ask us to "Discuss data size and format if relevant."
 
 2. GDELT (v2.0) - 2.5Tb (GKG)
 
@@ -38,6 +39,8 @@ TODO - Mention the size of the GDELT dataset? It's very large. Also, I don't kno
 
 After we get all the above information from the target datasets, we will use the region-based aggregations for carrying out the statistical analysis.
 
+To note that both GDELT and Twitter datasets are pretty big - which would put a huge toll on in-memory operations. Thankfully, we can make use the cluster (mentioned in class) to handle the Twitter one but we will simply try to trim down the amount of data we work with on GDELT - the first time we read the data may still take a long time but, afterwards, serialization should allow us to speed up the process.
+
 # List of internal milestones up until project milestone 2
 
 1. Get raw data for all the datasets and handle missing (or incomplete) information
@@ -48,4 +51,5 @@ After we get all the above information from the target datasets, we will use the
 6. Do exploratory analysis based on region equality
 
 # Questions for TAs
-1. Does the Twitter dataset contain dates? This would be useful for us to 
+1. Does the Twitter dataset contain dates? This would be useful for us to see bias evolution (over time).
+2. Can we use GDELT 2.0? Or the one that is provided is GDELT 1.0?
