@@ -35,11 +35,11 @@ For both **Name Entity Recognition** and **Sentiment Analysis** we will make use
 
 ## Personal Milestones (until milestone 2)
 
-1. Initial filtering on Twitter and UCDP datasets
-2. Conflict categorization on certain criteria
-3. Time-frame filtering on Twitter
-4. Perform **Name Entity Recognition** on tweets
-5. Perform **Sentiment Analysis** on tweets
+1. Perform **Name Entity Recognition** on tweets
+2. Perform **Sentiment Analysis** on tweets
+3. Initial filtering on UCDP dataset
+4. Conflict categorization on certain criteria
+5. Time-frame filtering on Twitter
 
 ## Questions for TAa
 
