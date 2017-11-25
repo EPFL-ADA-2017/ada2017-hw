@@ -4,7 +4,7 @@
 
 For our project we decided to make use of both UCDP and Twitter datasets. From these, we would like to figure out any existing gaps in the information proliferation around the globe, regarding the conflicts' locations.
 
-As to *how* we will make that information clear, we decided to create a Machine Learning (ML) model to study Twitter's history - around certain conflicts' dates - and make predictions as to what would happen if a conflict *x* would arise in region *y*. This model takes into account the result of **Sentiment Analysis** over the selected time-frame and outputs the expected sentiments for a hypothetically new time-frame around the speculated conflict. Would people show the same emotions we are expecting them to? Or would they seem to ignore this fact and maintain their normal behavior?
+As to *how* we will make that information clear, we decided to create a Machine Learning model to study Twitter's history - before, during and after certain conflicts' dates - and make predictions as to what would happen if a certain conflict would arise, in a certain region. This model takes into account the result of **Sentiment Analysis** over the selected time-frame and outputs the expected sentiments for an equivalent time-frame around the speculated conflict. This will allow us to see how sentiments are expected to evolve. Would people show the same emotions we are expecting them to? Or would they seem to ignore this fact and maintain their normal behavior?
 
 We thought it would be interesting to shed some light on world-wide situations to which the general public might be oblivious to, hence our approach to the problem. Bear in mind, our purpose is not to figure out *why* these differences may exist (e.g. political or media influences) but *where* they exist.
 
@@ -41,6 +41,6 @@ For both **Name Entity Recognition** and **Sentiment Analysis** we will make use
 4. Conflict categorization on certain criteria
 5. Time-frame filtering on Twitter
 
-## Questions for TAa
+## Questions for TAs
 
 1. Does the Twitter dataset contain the Tweets' dates?
