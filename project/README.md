@@ -25,13 +25,15 @@ We opted to use two datasets:
 
 2. Twitter
 
-  * From this dataset we plan on keeping only the Tweets around a couple days time-frame around the kept conflicts.
+  * We will consider only the Tweets in English. We will therefore only look at the emotions of the English-speaking Twitter users.
+  * We plan on keeping only the Tweets around a couple days time-frame around the kept conflicts.
   * After the initial filtering, we need only the Tweets' *content* and their *date* (discarding any other information).
   * For each time-frame, we do **Name Entity Recognition** (NER) to figure out the country it is talking about - keeping only the ones talking about the countries of conflict.
-  * For the remaining Tweets, we apply **Sentiment Analysis** on the text and store that information alongside the Tweets.
-  * We now use this information to train our model.
+  * For the remaining Tweets, we apply **Sentiment Analysis** on the text and store that information alongside the Tweets. We use [NLTK's NaiveBayes classifier](http://www.nltk.org/_modules/nltk/classify/naivebayes.html) - getting positive, negative and neutral Tweets.
+  * We then define the **Sentiment Contrast** as a measure that reflects the average daily sentiments before and after the conflict.
+  * We now use this information to train our model, that we will use to predict the **Sentiment Contrast** for certain conflicts (either real or hypothetical).
 
-For both **Name Entity Recognition** and **Sentiment Analysis** we will make use of **Natural Language Processing** libraries, such as [Spacy](https://spacy.io/) and [NLTK](http://www.nltk.org/). Also, we will need each country's *code*, *name*, *common denomination*, *nationality*, *currency* and an estimate of its *religious affiliation* ratios. For everything except the *religious affiliations*, we will use [mledoze's dataset](https://mledoze.github.io/countries/). For the last component, we will simply consider the most common affiliations and use [globalreligiousfutures dataset](http://globalreligiousfutures.org/explorer#/?subtopic=15&chartType=map&year=2010&data_type=number&religious_affiliation=55&destination=to&countries=Worldwide&age_group=all&gender=all&pdfMode=false).
+For both **Name Entity Recognition** and **Sentiment Analysis** we will make use of **Natural Language Processing** libraries, such as [Spacy](https://spacy.io/) and [NLTK](http://www.nltk.org/). Also, we will need each country's *code*, *name*, *cities*, *common denomination*, *nationality*, *currency* and an estimate of its *religious affiliation* ratios. For everything except the *religious affiliations*, we will use [mledoze's dataset](https://mledoze.github.io/countries/). For the last component, we will simply consider the most common affiliations and use [globalreligiousfutures dataset](http://globalreligiousfutures.org/explorer#/?subtopic=15&chartType=map&year=2010&data_type=number&religious_affiliation=55&destination=to&countries=Worldwide&age_group=all&gender=all&pdfMode=false).
 
 ## Personal Milestones (until milestone 2)
 
@@ -40,7 +42,3 @@ For both **Name Entity Recognition** and **Sentiment Analysis** we will make use
 3. Initial filtering on UCDP dataset
 4. Conflict categorization on certain criteria
 5. Time-frame filtering on Twitter
-
-## Questions for TAs
-
-1. Does the Twitter dataset contain the Tweets' dates?
