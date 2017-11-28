@@ -10,9 +10,9 @@ We thought it would be interesting to shed some light on world-wide situations t
 
 ## Research questions
 
-Is there a noticeable difference between the *expected* and *actual* emotions towards certain kinds of conflicts (and/or regions)?
+Is there a big emotional contrast, in Twiter, comparing *before* and *after* a conflict arises?
 
-If so, which conflicts (or regions) are the ones most notoriously affected by it?
+If so, is this more noticeable for certain categories of conflicts? Or does this vary by location?
 
 ## Datasets
 
