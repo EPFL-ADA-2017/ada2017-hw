@@ -1,55 +1,62 @@
-# Conflicts' locations and their information proliferation
+# World conflicts' information proliferation
 
-# Abstract
-For our project we decided to make use of both UCDP (complemented with GDELT) and Twitter datasets. From these, we would like to figure out any existing biases in the information proliferation around the globe, regarding the conflicts' locations. In other words, we are interested in comparing the reach of information on conflicts depending on the place where said conflicts take place.
+## Abstract
 
-As for our story, we believe it would be interesting to shed some light on world-wide situations to which the general public might be oblivious to. Bear in mind, our purpose is not to figure out *why* these biases may exist (e.g. political or media influences) but *where* they exist.
+For our project we decided to make use of both UCDP and Twitter datasets. From these, we would like to figure out any existing gaps in the information proliferation around the globe, regarding the conflicts' locations.
 
-Because the world might be focusing on some regions more than others, this unequally raises social concern and may impact social causes' resourcefulness. Although we do not believe we can fix the latter problem in this project, we do think this information would be empowering for people for better decision-making and awareness.
+As to *how* we will make that information clear, we decided to create a predictive model. This model takes a conflicts' *category* and *country* as features and tries to predict the *sentimental impact* on Twitter. To do this, we will use techniques like *Named Entity Recognition* and *Sentiment Analysis* to find out which Tweets are worth considering, for a given conflict, and their *sentiment strength* (not if they are *positive*, *negative* or *neutral* but their *strength* from 0.0 to 1.0). Analysing the *sentiment strength* before and after a conflict's start date, we would then define *sentimental impact* in the same range of values (from 0.0 to 1.0). Applying a threshold to the results would give us either *impactful* or *not impactful* - which is what our model will try to predict. Would people show stronger emotions towards a country where a conflict arose? Or would they seem to ignore this fact and maintain their normal behavior?
 
-# Research questions
-The following are the research questions that we would like to address:
+We thought it would be interesting to shed some light on world-wide situations to which the general public might be oblivious to, hence our approach to the problem. Bear in mind, our purpose is not to figure out *why* these differences may exist (e.g. political or media influences) but *where* they exist.
 
-1. **Region-specific conflicts**
- * Which conflicts take place in each region
-2. **Region-specific Twitter text content**
- * Find Tweets related with conflicts and identify the region they are referring to.
-3. **Check for generalized, globally existing biases**
- * Is the information proliferation different depending on where the conflicts take place? If so, do these biases change or evolve over time?
+## Research questions
 
-# Dataset
-The following are the three datasets that we would like to use:
+Is there a big emotional contrast, in Twiter, comparing *before* and *after* a conflict arises?
+
+If so, is this more noticeable for certain categories of conflicts? Or does this vary by location?
+
+## Datasets
+
+We opted to use two datasets:
 
 1. UCDP
+This dataset covers individual events of organized violence. We consider a subset of the conflicts in this dataset, and keep the relevant information for each of the conflicts.
 
- * Get date and location for conflicts around the world
- * Do a region-based aggregation (to reduce the amount of data to handle)
+2. Twitter
+Through *Language Recognition*, we will only take into account the Tweets in English - so the emotions considered for our analysis are those of English-speaking Twitter users. We will also filter the dataset according to the date, keeping only the Tweets around certain time-frames.
 
-2. GDELT (v2.0) - 2.5Tb (GKG)
+### UCDP
 
- * Get published articles' by theme, identifying the ones related to *conflicts*
- * Find the regions the articles focus on
- * Do a region-based aggregation of the articles (to reduce the amount of data to handle) based on the conflicts' locations
+  * From this dataset we plan on extracting conflicts based on their category - defined from *casualties*, *duration* and *involved parties*.
+  * Because of that, we only need to keep information regarding the conflict's *name*, *location*, *start date*, *end date* and *type*. We will consider the country of the conflict as the *location*.
 
-3. Twitter
+### Twitter
 
- * Get Tweets by theme, identifying the ones related to *conflicts*
- * Find the regions they focus on
- * Do a region-based aggregation  of the tweets (to reduce the amount of data to handle) based on the conflicts' locations
+  * We plan on keeping only the Tweets in English published a couple days away (before and after) from the kept conflicts' start dates.
+  * After the initial filtering, we need only the Tweets' *content* and their *date* (discarding any other information).
+  * For each time-frame, we do **Named Entity Recognition** (NER) to figure out the country it is talking about - discard all that don't mention countries of conflict.
+  * For the remaining Tweets, we apply **Sentiment Analysis** on the text and store that information alongside the Tweets.
+  * We then define the **Sentimental Impact** as a measure that reflects the contrast between the average daily *sentiment strength* before and after the conflict.
+  * We now use this information to train our model, that we will use to predict the **Sentiment Impact** for certain conflicts (either real or hypothetical).
 
-After we get all the above information from the target datasets, we will use the region-based aggregations for carrying out the statistical analysis.
+## Named Entity Recognition
+For **Named Entity Recognition** we make use of a **Natural Language Processing** library called [Spacy](https://spacy.io/). With it, we use each country's *code*, *name*, *cities*, *common denomination*, *nationality*, *currency* and an estimate of its *religious affiliation* ratios for identifying the country that is being talked about in a Tweet (if there is one). For everything except the *religious affiliations*, we will use [mledoze's dataset](https://mledoze.github.io/countries/) and [maxmind's dataset](https://www.maxmind.com/de/free-world-cities-database). For the last component, we will simply consider the most common affiliations and from [globalreligiousfutures dataset](http://globalreligiousfutures.org/explorer#/?subtopic=15&chartType=map&year=2010&data_type=number&religious_affiliation=55&destination=to&countries=Worldwide&age_group=all&gender=all&pdfMode=false).
 
-To note that both GDELT and Twitter datasets are pretty big - which would put a huge toll on in-memory operations. Thankfully, we can make use the cluster (mentioned in class) to handle the Twitter one but we will simply try to trim down the amount of data we work with on GDELT - the first time we read the data may still take a long time but, afterwards, serialization should allow us to speed up the process.
+## Sentiment Analysis
+For **Sentiment Analysis** we use [NLTK's Vader sentiment analyzer](http://www.nltk.org/_modules/nltk/sentiment/vader.html) - getting a *compund* value from -1.0 to 1.0. We keep this compound value so that we reduce the margin of error when doing daily averaging and calculating *sentimental impact* - whichi we ultimately categorize into *impactful* and *not impactful*.
 
-# List of internal milestones up until project milestone 2
+## Project Structure
 
-1. Get raw data for all the datasets and handle missing (or incomplete) information
-2. Get GDELT and Twitter data organized by theme
-3. Get GDELT and Twitter data's region of focus
-4. Prune unnecessary data from all datasets
-5. For each dataset, organize data by region
-6. Do exploratory analysis based on region equality
+Although the main part of the project can be seen in the [project notebook](https://github.com/nunomota/ada2017-hw/blob/master/project/project.ipynb), there are other important directories than contain interesting information:
 
-# Questions for TAs
-1. Does the Twitter dataset contain dates? This would be useful for us to see bias evolution (over time).
-2. Can we use GDELT 2.0? Or the one that is provided is GDELT 1.0?
+* [parsers](https://github.com/nunomota/ada2017-hw/tree/master/project/parsers): Contains notebooks specifically designed to parse, filter and format the data from the used datasets
+* [analyzers](https://github.com/nunomota/ada2017-hw/tree/master/project/analyzers): Contains notebooks that perform exploratory analysis on parsed datasets (to either help with feature selection or categorization)
+* [scripts](https://github.com/nunomota/ada2017-hw/tree/master/project/parsers): Contains python scripts to be used as modules for several steps of the project
+* [data](https://github.com/nunomota/ada2017-hw/tree/master/project/data): Contains both the *raw* and *parsed* datasets generated by our notebooks - for memory concerns, the *raw* directory is zipped
+* [report](https://github.com/nunomota/ada2017-hw/tree/master/project/report): Contains the report for the project
+
+## Completed Milestones
+
+1. Perform **Named Entity Recognition** on Tweets
+2. Perform **Sentiment Analysis** on Tweets
+3. Initial filtering on UCDP dataset
+4. Perform **Language Recognition** on Tweets
