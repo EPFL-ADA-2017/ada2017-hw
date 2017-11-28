@@ -108,13 +108,11 @@ def get_likely_results(label, text):
         # Country check
         result = get_matching_row(text, country_nationality_df, ['ID', 'Official Name', 'Common Name'])
         if result is not None:
-            print('GPE -> Country!')
             return get_result_country_probability_dict(result, 'Country')
         
         # City check
         result = get_matching_row(text, country_cities_df, ['City'])
         if result is not None:
-            print('GPE -> City!')
             return get_result_country_probability_dict(result, 'City')
     
     # Check if it is a nationality/religion
@@ -122,20 +120,17 @@ def get_likely_results(label, text):
         # Nationality check
         result = get_matching_row(text, country_nationality_df, ['Nationality'])
         if result is not None:
-            print('NORP -> Nationality!')
             return get_result_country_probability_dict(result, 'Nationality')
         
         # Religion check
         result = get_matching_row(text, country_religion_df, ['Religion', 'Affiliation'])
         if result is not None:
-            print('NORP -> Religion!')
             return get_result_country_probability_dict(result, 'Religion')
     
     # Check if it is a known currency
     elif label == 'MONEY':
         result = get_matching_row(text, currency_country_df, ['ID'])
         if result is not None:
-            print('MONEY -> Currency')
             return get_result_country_probability_dict(result, 'Currency')
             
     return None
@@ -188,13 +183,9 @@ def get_countries_from_content(text):
     interesting_entities = get_interesting_text_entities(text)
     country_probability_dict = {}
     for ent_label, ent_text in interesting_entities:
-        print('\n{} -> {}'.format(ent_text, ent_label))
         results = get_likely_results(ent_label, ent_text)
         if results is not None:
-            print(results)
             country_probability_dict = merge_probability_dicts(country_probability_dict, results)
-        else:
-            print('UNKNOWN')
     
     return normalize_probability_dict(country_probability_dict)
 
