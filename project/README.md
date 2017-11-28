@@ -38,10 +38,10 @@ Through *Language Recognition*, we will only take into account the Tweets in Eng
   * We then define the **Sentimental Impact** as a measure that reflects the contrast between the average daily *sentiment strength* before and after the conflict.
   * We now use this information to train our model, that we will use to predict the **Sentiment Impact** for certain conflicts (either real or hypothetical).
 
-#### Named Entity Recognition
+## Named Entity Recognition
 For **Named Entity Recognition** we make use of a **Natural Language Processing** library called [Spacy](https://spacy.io/). With it, we use each country's *code*, *name*, *cities*, *common denomination*, *nationality*, *currency* and an estimate of its *religious affiliation* ratios for identifying the country that is being talked about in a Tweet (if there is one). For everything except the *religious affiliations*, we will use [mledoze's dataset](https://mledoze.github.io/countries/) and [maxmind's dataset](https://www.maxmind.com/de/free-world-cities-database). For the last component, we will simply consider the most common affiliations and from [globalreligiousfutures dataset](http://globalreligiousfutures.org/explorer#/?subtopic=15&chartType=map&year=2010&data_type=number&religious_affiliation=55&destination=to&countries=Worldwide&age_group=all&gender=all&pdfMode=false).
 
-### Sentiment Analysis
+## Sentiment Analysis
 For **Sentiment Analysis** we use [NLTK's Vader sentiment analyzer](http://www.nltk.org/_modules/nltk/sentiment/vader.html) - getting a *compund* value from -1.0 to 1.0. We keep this compound value so that we reduce the margin of error when doing daily averaging and calculating *sentimental impact* - whichi we ultimately categorize into *impactful* and *not impactful*.
 
 ## Completed Milestones
