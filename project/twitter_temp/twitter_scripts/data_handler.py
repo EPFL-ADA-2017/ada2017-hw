@@ -1,7 +1,7 @@
 import codecs
 from pyspark import SparkContext
 
-DATA_PATH_LOCAL = '/home/motagonc/twitter_dataset/small_tweet_dataset'
+DATA_PATH_LOCAL = '/home/motagonc/ada2017-hw-private/project/twitter_temp/twitter_dataset/small_tweet_dataset'
 DATA_PATH_REMOTE = 'hdfs:////datasets/tweets-leon'
 
 twitter_schema = [
