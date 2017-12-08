@@ -29,8 +29,8 @@ existing time zone difference between Napari and Samoa)
 5. Since our timeframe will always be greater than 48h, and we care mainly about the emotional
 transition from before/after a conflict, regardless of time-zone, we will never ignore Tweets
 that belong to a critical window of (+/-) 22h 50m around the conflict.
-6. A critical window of (+/-) 22h 50 minutes around an event will allow for an overall timeframe
-of 45h 50m, larger than the biggest time-zone difference - so regardless of the time of day people
+6. A critical window of (+/-) 22h 50m around an event will allow for an overall timeframe
+of 45h 40m, larger than the biggest time-zone difference - so regardless of the time of day people
 might be more active on Twitter, we will always account for their activity 
 '''
 log_print('Parsing date format')
