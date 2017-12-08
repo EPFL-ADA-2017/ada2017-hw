@@ -187,3 +187,6 @@ TSWLatexianTemp*
 
 # Project's raw datasets
 project/data/raw/*
+
+# Projects pyc files
+*.pyc
