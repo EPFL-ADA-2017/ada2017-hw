@@ -17,6 +17,22 @@ log_print('Filtering \'en\' language entries')
 twitter_df = twitter_df.filter(twitter_df['Language'] == 'en')
 
 # Parse date format (avoid UDFs because of serialization/desirialization overhead)
+''' 
+Format ignores the Time-Zone component. This is not a problem for a couple of reasons:
+
+1. In this case we can increase the parsing/filtering speed of our algorithm
+2. It doesn't really affect our results since it simply will leave more information
+at filtering stage
+3. After filtering, we can define our margin of error as being (+/-) 25h 10m (the largest
+existing time zone difference between Napari and Samoa)
+4. We can always adjust our 'time-frame' to account for these differences
+5. Since our timeframe will always be greater than 48h, and we care mainly about the emotional
+transition from before/after a conflict, regardless of time-zone, we will never ignore Tweets
+that belong to a critical window of (+/-) 22h 50m around the conflict.
+6. A critical window of (+/-) 22h 50 minutes around an event will allow for an overall timeframe
+of 45h 50m, larger than the biggest time-zone difference - so regardless of the time of day people
+might be more active on Twitter, we will always account for their activity 
+'''
 log_print('Parsing date format')
 date_format = "EEE MMM dd HH:mm:ss '+'SSSS yyyy"
 twitter_df = twitter_df.withColumn('Timestamp', unix_timestamp(twitter_df['Date'], date_format).cast('timestamp')) \
