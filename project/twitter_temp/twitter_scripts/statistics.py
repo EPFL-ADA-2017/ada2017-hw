@@ -23,8 +23,7 @@ class Statistics:
         self._data[self._cur_stage] = stage_data
 
     def _get_dataframe_count(self, dataframe):
-        #return dataframe.rdd.count()
-        return 0
+        return dataframe.rdd.countApprox(timeout=1000)
 
     def __repr__(self):
         overall_str_format = '{}: {}'
