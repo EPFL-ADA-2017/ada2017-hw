@@ -1,20 +1,44 @@
-from pyspark.sql.functions import unix_timestamp, dayofmonth, year, month
+# Add scripts folder to path
+import sys
+sys.path.append('/home/motagonc/ada2017-hw-private/project/scripts')
+
+# Imports
+from pyspark.sql.functions import unix_timestamp, dayofmonth, year, month, udf
 from pyspark import SparkContext, SQLContext
+from pyspark.sql.types import BooleanType
+from statistics import Statistics
 from logger import log_print
 
+import language_recognition as lr
 import data_handler as dh
 
 # context initialization
 sc = SparkContext()
 sqlContext = SQLContext(sc)
 
+# Add modules for UDFs
+sc.addPyFile('/home/motagonc/ada2017-hw-private/project/scripts/language_recognition.py')
+
+# statistics initialization
+statistics = Statistics('Twitter Filter', True)
+
 # Fetch data
 log_print('Fetching data from local dataset')
 twitter_df = dh.fetch_data('local', sc)
 
+# Removing unnecessary columns
+twitter_df = twitter_df.drop(twitter_df['User']).drop(twitter_df['ID'])
+
+# Removing rows with null values (we NEED values for every column)
+twitter_df = twitter_df.na.drop()
+
 # Filter english language tweets
 log_print('Filtering \'en\' language entries')
-twitter_df = twitter_df.filter(twitter_df['Language'] == 'en')
+statistics.set_stage('Pre-defined laguage filter')
+
+statistics.add_stats('Before', twitter_df)
+twitter_df = twitter_df.filter(twitter_df['Language'] == 'en').drop(twitter_df['Language'])
+statistics.add_stats('After', twitter_df)
 
 # Parse date format (avoid UDFs because of serialization/desirialization overhead)
 ''' 
@@ -44,6 +68,18 @@ twitter_df = twitter_df.withColumn('Day', dayofmonth(twitter_df['Parsed Date']).
 			.withColumn('Year', year(twitter_df['Parsed Date']).cast('string')) \
 			.drop(twitter_df['Parsed Date'])
 '''
+
+log_print('Filtering english tweets')
+statistics.set_stage('Custom laguage filter')
+is_tweet_english_udf = udf(lr.is_tweet_english, BooleanType())
+
+statistics.add_stats('Before', twitter_df)
+twitter_df = twitter_df.filter(is_tweet_english_udf(twitter_df['Content']))
+statistics.add_stats('After', twitter_df)
+
+
+# Print statistics
+print(statistics)
 
 # Display 5 entries
 twitter_df.show(5)
