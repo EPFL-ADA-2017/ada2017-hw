@@ -30,6 +30,7 @@ def _fetch_data_from_remote(spark_context):
 
 def _convert_rdd_to_df(target_rdd):
 	split_target_rdd = target_rdd.map(lambda x: x.split('\t'))
+	split_target_rdd = split_target_rdd.filter(lambda x: len(x) == len(twitter_schema))
 	return split_target_rdd.toDF(twitter_schema)
 
 '''
