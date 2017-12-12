@@ -30,7 +30,7 @@ twitter_df = dh.fetch_data('local', sc)
 twitter_df = twitter_df.drop(twitter_df['User']).drop(twitter_df['ID'])
 
 # Removing rows with null values (we NEED values for every column)
-twitter_df = twitter_df.na.drop()
+twitter_df = twitter_df.dropna()
 
 # Filter english language tweets
 log_print('Filtering \'en\' language entries')
