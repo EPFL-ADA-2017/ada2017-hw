@@ -11,4 +11,7 @@ def is_tweet_english(tweet_text):
     This method returns whether or not
     a Tweet's text is in English.
     '''
-    return langdetect.detect(tweet_text) == 'en'
+    try:
+    	return langdetect.detect(tweet_text) == 'en'
+    except:
+    	return False
