@@ -1,4 +1,5 @@
 import codecs
+import gzip
 from pyspark import SparkContext
 
 DATA_PATH_LOCAL_TWITTER = '/home/motagonc/ada2017-hw-private/project/twitter_temp/twitter_dataset/small_tweet_dataset'
@@ -20,7 +21,8 @@ ucdp_schema = [
 	'Conflict Name',
 	'Country',
 	'Date Start',
-	'Date End'
+	'Date End',
+	'Casualties'
 ]
 
 '''
@@ -31,9 +33,8 @@ def _fetch_data_failed(spark_context):
 	return None
 
 def _fetch_ucdp_data_from_local(spark_context):
-	with open(DATA_PATH_LOCAL_UCDP, 'r') as local_file:
-		conflicts = local_file.readlines()
-	conflicts = [conflict.strip() for conflict in conflicts]
+	with gzip.open(DATA_PATH_LOCAL_UCDP) as local_file:
+		conflicts = [conflict.strip() for conflict in codecs.iterdecode(local_file, 'utf8')][1:]
 	return spark_context.parallelize(conflicts)
 
 def _fetch_twitter_data_from_local(spark_context):
