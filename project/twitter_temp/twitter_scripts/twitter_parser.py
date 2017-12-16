@@ -24,7 +24,7 @@ statistics = Statistics('Twitter Filter', True)
 
 # Fetch data
 log_print('Fetching data from local dataset')
-twitter_df, ucdp_df = dh.fetch_data('local', sc, sqlContext)
+twitter_df, ucdp_df = dh.fetch_data('local', sc)
 
 # Removing unnecessary columns
 twitter_df = twitter_df.drop(twitter_df['User']).drop(twitter_df['ID'])
