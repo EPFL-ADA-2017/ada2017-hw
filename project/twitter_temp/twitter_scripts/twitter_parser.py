@@ -3,14 +3,18 @@ import sys
 sys.path.append('/home/motagonc/ada2017-hw-private/project/scripts')
 
 # Imports
-from pyspark.sql.functions import unix_timestamp, dayofmonth, year, month, udf
+from pyspark.sql.functions import abs, datediff, unix_timestamp, dayofmonth, year, month, udf
 from pyspark import SparkContext, SQLContext
 from pyspark.sql.types import BooleanType
 from statistics import Statistics
 from logger import log_print
 
+import name_entity_recognition as ner
 import language_recognition as lr
 import data_handler as dh
+
+# constants
+DEFAULT_TIME_WINDOW = 2
 
 # context initialization
 sc = SparkContext()
@@ -18,9 +22,10 @@ sqlContext = SQLContext(sc)
 
 # Add modules for UDFs
 sc.addPyFile('/home/motagonc/ada2017-hw-private/project/scripts/language_recognition.py')
+sc.addPyFile('/home/motagonc/ada2017-hw-private/project/scripts/name_entity_recognition.py')
 
 # statistics initialization
-statistics = Statistics('Twitter Filter', True)
+statistics = Statistics('Twitter Filter', False)
 
 # Fetch data
 log_print('Fetching data from local dataset')
@@ -58,9 +63,14 @@ of 45h 40m, larger than the biggest time-zone difference - so regardless of the 
 might be more active on Twitter, we will always account for their activity 
 '''
 log_print('Parsing date format')
-date_format = "EEE MMM dd HH:mm:ss '+'SSSS yyyy"
-twitter_df = twitter_df.withColumn('Timestamp', unix_timestamp(twitter_df['Date'], date_format).cast('timestamp')) \
+twitter_date_format = "EEE MMM dd HH:mm:ss '+'SSSS yyyy"
+twitter_df = twitter_df.withColumn('Timestamp', unix_timestamp(twitter_df['Date'], twitter_date_format).cast('timestamp')) \
 			.drop(twitter_df['Date'])
+
+ucdp_date_format = "yyyy-MM-dd"
+ucdp_df = ucdp_df.withColumn('Timestamp', unix_timestamp(ucdp_df['Date Start'], ucdp_date_format).cast('timestamp')) \
+			.drop(ucdp_df['Date Start']) \
+			.drop(ucdp_df['Date End'])
 '''
 log_print('Separating date into \'day\', \'month\' and \'year\' columns')
 twitter_df = twitter_df.withColumn('Day', dayofmonth(twitter_df['Parsed Date']).cast('string')) \
@@ -77,8 +87,17 @@ statistics.add_stats('Before', twitter_df)
 twitter_df = twitter_df.filter(is_tweet_english_udf(twitter_df['Content']))
 statistics.add_stats('After', twitter_df)
 
+log_print('Filtering on time window')
+statistics.set_stage('Custom timestamp filter')
+is_tweet_about_country_udf = udf(ner.is_tweet_about_country, BooleanType())
+
+statistics.add_stats('Before', twitter_df)
+twitter_df = twitter_df.join(ucdp_df, datediff(twitter_df['Timestamp'], ucdp_df['Timestamp']) <= DEFAULT_TIME_WINDOW, 'inner')
+statistics.add_stats('After', twitter_df)
+
 # Print statistics
 print(statistics)
 
 # Display 5 entries
 twitter_df.show(5)
+ucdp_df.show(5)
