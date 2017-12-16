@@ -1,5 +1,4 @@
 import codecs
-import pandas as pd
 from pyspark import SparkContext
 
 DATA_PATH_LOCAL_TWITTER = '/home/motagonc/ada2017-hw-private/project/twitter_temp/twitter_dataset/small_tweet_dataset'
@@ -14,6 +13,16 @@ twitter_schema = [
 	'Content'
 ]
 
+ucdp_schema = [
+	'ID',
+	'Year',
+	'Type',
+	'Conflict Name',
+	'Country',
+	'Date Start',
+	'Date End'
+]
+
 '''
 PRIVATE METHODS
 '''
@@ -21,9 +30,11 @@ PRIVATE METHODS
 def _fetch_data_failed(spark_context):
 	return None
 
-def _fetch_ucdp_data_from_local(sql_context):
-	ucdp_df = pd.read_csv(DATA_PATH_LOCAL_UCDP, index_col='id', encoding='utf-8', compression='gzip')
-	return sql_context.createDataframe(ucdp_df, ucdp_df.columns)
+def _fetch_ucdp_data_from_local(spark_context):
+	with open(DATA_PATH_LOCAL_UCDP, 'r') as local_file:
+		conflicts = local_file.readlines()
+	conflicts = [conflict.strip() for conflict in conflicts]
+	return spark_context.parallelize(conflicts)
 
 def _fetch_twitter_data_from_local(spark_context):
 	with open(DATA_PATH_LOCAL_TWITTER, 'r') as local_file:
@@ -34,10 +45,10 @@ def _fetch_twitter_data_from_local(spark_context):
 def _fetch_twitter_data_from_remote(spark_context):
 	return spark_context.textFile(DATA_PATH_REMOTE)
 
-def _convert_rdd_to_df(target_rdd):
-	split_target_rdd = target_rdd.map(lambda x: x.split('\t'))
-	split_target_rdd = split_target_rdd.filter(lambda x: len(x) == len(twitter_schema))
-	return split_target_rdd.toDF(twitter_schema)
+def _convert_rdd_to_df(target_rdd, split_character, schema):
+	split_target_rdd = target_rdd.map(lambda x: x.split(split_character))
+	split_target_rdd = split_target_rdd.filter(lambda x: len(x) == len(schema))
+	return split_target_rdd.toDF(schema)
 
 '''
 PUBLIC METHODS
@@ -51,17 +62,22 @@ def download_data_sample(n_entries, spark_context):
 			local_file.write(encoded_sample + '\n')
 	return
 
-def fetch_data(source, spark_context, sql_context):
+def fetch_data(source, spark_context):
 	twitter_result_rdd = {
 		'local': _fetch_twitter_data_from_local,
 		'remote': _fetch_twitter_data_from_remote
 	}.get(source, _fetch_data_failed)(spark_context)
 	
-	if (twitter_result_rdd is None):
+	ucdp_result_rdd = {
+		'local': _fetch_ucdp_data_from_local,
+		'remote': _fetch_ucdp_data_from_local
+	}.get(source, _fetch_data_failed)(spark_context)
+
+	if (twitter_result_rdd is None or ucdp_result_rdd is None):
 		return None
 
-	twitter_result_df = _convert_rdd_to_df(twitter_result_rdd)
-	ucdp_result_df = _fetch_ucdp_data_from_local(sql_context)
+	twitter_result_df = _convert_rdd_to_df(twitter_result_rdd, '\t', twitter_schema)
+	ucdp_result_df = _convert_rdd_to_df(ucdp_result_rdd, ',', ucdp_schema)
 
 	return (twitter_result_df, ucdp_result_df)
 
