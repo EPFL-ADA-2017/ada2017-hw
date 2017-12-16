@@ -24,7 +24,7 @@ statistics = Statistics('Twitter Filter', True)
 
 # Fetch data
 log_print('Fetching data from local dataset')
-twitter_df = dh.fetch_data('local', sc)
+twitter_df, ucdp_df = dh.fetch_data('local', sc, sqlContext)
 
 # Removing unnecessary columns
 twitter_df = twitter_df.drop(twitter_df['User']).drop(twitter_df['ID'])
@@ -76,7 +76,6 @@ is_tweet_english_udf = udf(lr.is_tweet_english, BooleanType())
 statistics.add_stats('Before', twitter_df)
 twitter_df = twitter_df.filter(is_tweet_english_udf(twitter_df['Content']))
 statistics.add_stats('After', twitter_df)
-
 
 # Print statistics
 print(statistics)
