@@ -19,10 +19,10 @@ ucdp_schema = [
 	'Year',
 	'Type',
 	'Conflict Name',
-	'Country',
 	'Date Start',
 	'Date End',
-	'Casualties'
+	'Casualties',
+	'Country'
 ]
 
 '''
