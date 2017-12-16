@@ -9,7 +9,6 @@ from pyspark.sql.types import BooleanType
 from statistics import Statistics
 from logger import log_print
 
-import name_entity_recognition as ner
 import language_recognition as lr
 import data_handler as dh
 
@@ -22,7 +21,6 @@ sqlContext = SQLContext(sc)
 
 # Add modules for UDFs
 sc.addPyFile('/home/motagonc/ada2017-hw-private/project/scripts/language_recognition.py')
-sc.addPyFile('/home/motagonc/ada2017-hw-private/project/scripts/name_entity_recognition.py')
 
 # statistics initialization
 statistics = Statistics('Twitter Filter', False)
@@ -87,9 +85,13 @@ statistics.add_stats('Before', twitter_df)
 twitter_df = twitter_df.filter(is_tweet_english_udf(twitter_df['Content']))
 statistics.add_stats('After', twitter_df)
 
+log_print('Filtering by year')
+statistics.set_stage('Custom year filter')
+twitter_df = twitter_df.filter(year(twitter_df['Timestamp']) == 2015)
+ucdp_df = ucdp_df.filter(year(ucdp_df['Timestamp']) == 2015)
+
 log_print('Filtering on time window')
 statistics.set_stage('Custom timestamp filter')
-is_tweet_about_country_udf = udf(ner.is_tweet_about_country, BooleanType())
 
 statistics.add_stats('Before', twitter_df)
 twitter_df = twitter_df.join(ucdp_df, datediff(twitter_df['Timestamp'], ucdp_df['Timestamp']) <= DEFAULT_TIME_WINDOW, 'inner')
