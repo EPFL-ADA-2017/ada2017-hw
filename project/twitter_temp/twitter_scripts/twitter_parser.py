@@ -111,10 +111,8 @@ twitter_df, twitter_statistics = filter_twitter_df(twitter_df)
 ucdp_df, ucdp_statistics = filter_ucdp_df(ucdp_df)
 
 # Print statistics
-if twitter_statistics._is_enabled == True:
-	log_print(twitter_statistics)
-if ucdp_statistics._is_enabled == True:
-	log_print(ucdp_statistics)
+log_print(twitter_statistics)
+log_print(ucdp_statistics)
 
 # Display 5 entries
 log_print(twitter_df)
