@@ -27,8 +27,6 @@ twitter_df, ucdp_df = dh.fetch_data('local', sc)
 def filter_twitter_df(twitter_df):
 
 	log_print('>> Start >> Filtering Twitter dataframe')
-	timer = Timer('Function elapsed')
-	timer.start()
 
 	# defining necessary UDFs
 	is_tweet_english_udf = udf(lr.is_tweet_english, BooleanType())
@@ -77,8 +75,6 @@ def filter_twitter_df(twitter_df):
 	filtered_twitter_df = filtered_twitter_df.filter(is_tweet_english_udf(filtered_twitter_df['Content']))
 	statistics.add_stats('After', filtered_twitter_df)
 
-	timer.stop()
-	log_print(timer)
 	log_print('<<  End  << Filtering Twitter dataframe')
 
 	return (filtered_twitter_df, statistics)
@@ -86,8 +82,6 @@ def filter_twitter_df(twitter_df):
 def filter_ucdp_df(ucdp_df):
 
 	log_print('>> Start >> Filtering Twitter dataframe')
-	timer = Timer('Function elapsed')
-	timer.start()
 
 	# statistics initialization
 	statistics = Statistics('UCDP Filter', False)
@@ -98,16 +92,12 @@ def filter_ucdp_df(ucdp_df):
 				.drop(ucdp_df['Date Start']) \
 				.drop(ucdp_df['Date End'])
 
-	timer.stop()
-	log_print(timer)
 	log_print('<<  End  << Filtering Twitter dataframe')
 
 	return (filtered_ucdp_df, statistics)
 
 def merge_dataframes_on_time_window(twitter_df, ucdp_df):
 	log_print('>> Start >> Filtering on time window')
-	timer = Timer('Function elapsed')
-	timer.start()
 
 	# statistics initialization
 	statistics = Statistics('Twitter/UCDP Merging', False)
@@ -120,14 +110,12 @@ def merge_dataframes_on_time_window(twitter_df, ucdp_df):
 	merged_df = twitter_df.join(ucdp_df, datediff(twitter_df['Timestamp'], ucdp_df['Timestamp']) <= DEFAULT_TIME_WINDOW, 'inner')
 	statistics.add_stats('After', merged_df)
 
-	timer.stop()
-	log_print(timer)
 	log_print('<<  End  << Filtering on time window')
 
 	return (merged_df, statistics)
 
 # Start overall timer
-timer = Timer('Overall elapsed')
+timer = Timer('Time elapsed')
 timer.start()
 
 # Filter dataframes and collect statistics
