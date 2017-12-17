@@ -22,9 +22,10 @@ class Timer:
     	self._end_time = _get_current_time()
 
     def __repr__(self):
-        overall_str_format = '[{} Days : {} Hours : {} Minutes : {} Seconds]'
+        overall_str_format = '[{}] {} Days : {} Hours : {} Minutes : {} Seconds'
         overall_time_delta = _get_time_delta()
         return overall_str_format.format(
+        	self._timer_label,
         	overall_time_delta.days,
         	overall_time_delta.hours,
         	overall_time_delta.minutes,
@@ -32,9 +33,10 @@ class Timer:
         )
 
     def __str__(self):
-        overall_str_format = '[{} Days : {} Hours : {} Minutes : {} Seconds]'
+        overall_str_format = '[{}] {} Days : {} Hours : {} Minutes : {} Seconds'
         overall_time_delta = _get_time_delta()
         return overall_str_format.format(
+        	self._timer_label,
         	overall_time_delta.days,
         	overall_time_delta.hours,
         	overall_time_delta.minutes,
