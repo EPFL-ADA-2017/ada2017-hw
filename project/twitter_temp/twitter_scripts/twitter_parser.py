@@ -28,6 +28,8 @@ twitter_df, ucdp_df = dh.fetch_data('local', sc)
 
 def filter_twitter_df(twitter_df):
 
+	log_print('>> Start >> Filtering Twitter dataframe')
+
 	# defining necessary UDFs
 	is_tweet_english_udf = udf(lr.is_tweet_english, BooleanType())
 
@@ -83,9 +85,13 @@ def filter_twitter_df(twitter_df):
 	statistics.add_stats('After', filtered_twitter_df)
 	'''
 
+	log_print('<<  End  << Filtering Twitter dataframe')
+
 	return (filtered_twitter_df, statistics)
 
 def filter_ucdp_df(ucdp_df):
+
+	log_print('>> Start >> Filtering Twitter dataframe')
 
 	# statistics initialization
 	statistics = Statistics('UCDP Filter', False)
@@ -96,6 +102,8 @@ def filter_ucdp_df(ucdp_df):
 				.drop(ucdp_df['Date Start']) \
 				.drop(ucdp_df['Date End'])
 
+	log_print('<<  End  << Filtering Twitter dataframe')
+
 	return (filtered_ucdp_df, statistics)
 
 # Filter dataframes and collect statistics
@@ -104,10 +112,10 @@ ucdp_df, ucdp_statistics = filter_ucdp_df(ucdp_df)
 
 # Print statistics
 if twitter_statistics._is_enabled == True:
-	print(twitter_statistics)
+	log_print(twitter_statistics)
 if ucdp_statistics._is_enabled == True:
-	print(ucdp_statistics)
+	log_print(ucdp_statistics)
 
 # Display 5 entries
-twitter_df.show(5)
-ucdp_df.show(5)
+log_print(twitter_df)
+log_print(ucdp_df)
