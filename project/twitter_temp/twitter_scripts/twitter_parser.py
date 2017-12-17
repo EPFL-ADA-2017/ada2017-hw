@@ -133,9 +133,12 @@ log_print(ucdp_statistics)
 log_print(twitter_df)
 log_print(ucdp_df)
 
+ucdp_df.repartition(ucdp_df['Country'])
+dh.save_data(ucdp_df, 'motagonc_ucdp_df_sample')
+
 # Display merged results
-log_print(merged_df)
-log_print(merged_statistics)
+#log_print(merged_df)
+#log_print(merged_statistics)
 
 # Display timer
 timer.stop()
