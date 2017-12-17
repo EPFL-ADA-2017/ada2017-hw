@@ -25,20 +25,34 @@ nlp = spacy.load('en')
 alpha_regex = re.compile('[^a-zA-Z]')
 
 # Paths for the matching countries, nationalities, religions and currencies
-parsed_country_nationality_file = './../data/parsed/parsed_country_nationality.csv'
-parsed_currency_country_file = '../data/parsed/parsed_currency_country.csv'
-parsed_country_religion_file = '../data/parsed/country_religion_files/parsed_country_religion.csv'
-parsed_country_cities_file = '../data/parsed/parsed_country_cities_grouped.csv'
+parsed_country_nationality_file = 'data/parsed/parsed_country_nationality.csv'
+parsed_currency_country_file = 'data/parsed/parsed_currency_country.csv'
+parsed_country_religion_file = 'data/parsed/country_religion_files/parsed_country_religion.csv'
+parsed_country_cities_file = 'data/parsed/parsed_country_cities_grouped.csv'
 
 # Load the necessary datasets
-country_nationality_df = pd.read_csv(parsed_country_nationality_file, encoding='utf-8', compression='gzip', index_col=False)
-currency_country_df = pd.read_csv(parsed_currency_country_file, encoding='utf-8', compression='gzip', index_col=False)
-country_religion_df = pd.read_csv(parsed_country_religion_file, encoding='utf-8', compression='gzip', index_col=False)
-country_cities_df = pd.read_csv(parsed_country_cities_file, encoding='utf-8', compression='gzip', index_col=False)
+country_nationality_df = pd.DataFrame()
+currency_country_df = pd.DataFrame()
+country_religion_df = pd.DataFrame()
+country_cities_df = pd.DataFrame()
 
-# Fix currency and city columns
-currency_country_df['Countries'] = currency_country_df['Countries'].apply(lambda x: x.strip('[]').replace('\'', '').replace(' ', '').split(',')).astype(list)
-country_cities_df['Countries'] = country_cities_df['Countries'].apply(lambda x: x.strip('[]').replace('\'', '').replace(' ', '').split(',')).astype(list)
+def load_data(data_directory_prefix):
+    
+    # Update the file path
+    new_parsed_country_nationality_file = '{}/{}'.format(data_directory_prefix, parsed_country_nationality_file)
+    new_parsed_currency_country_file = '{}/{}'.format(data_directory_prefix, parsed_currency_country_file)
+    new_parsed_country_religion_file = '{}/{}'.format(data_directory_prefix, parsed_country_religion_file)
+    new_parsed_country_cities_file = '{}/{}'.format(data_directory_prefix, parsed_country_cities_file)
+    
+    # Load the necessary datasets
+    country_nationality_df = pd.read_csv(new_parsed_country_nationality_file, encoding='utf-8', compression='gzip',index_col=False)
+    currency_country_df = pd.read_csv(new_parsed_currency_country_file, encoding='utf-8', compression='gzip', index_col=False)
+    country_religion_df = pd.read_csv(new_parsed_country_religion_file, encoding='utf-8', compression='gzip', index_col=False)
+    country_cities_df = pd.read_csv(new_parsed_country_cities_file, encoding='utf-8', compression='gzip', index_col=False)
+
+    # Fix currency and city columns
+    currency_country_df['Countries'] = currency_country_df['Countries'].apply(lambda x: x.strip('[]').replace('\'', '').replace(' ', '').split(',')).astype(list)
+    country_cities_df['Countries'] = country_cities_df['Countries'].apply(lambda x: x.strip('[]').replace('\'', '').replace(' ', '').split(',')).astype(list)
 
 def get_result_country_probability_dict(result_row, result_label):
     '''
