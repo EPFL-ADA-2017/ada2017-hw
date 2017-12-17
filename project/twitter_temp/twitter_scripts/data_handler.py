@@ -1,10 +1,15 @@
 import codecs
 import gzip
+
 from pyspark import SparkContext
+from logger import log_print
 
 DATA_PATH_LOCAL_TWITTER = '/home/motagonc/ada2017-hw-private/project/twitter_temp/twitter_dataset/small_tweet_dataset'
 DATA_PATH_LOCAL_UCDP = '/home/motagonc/ada2017-hw-private/project/data/parsed/parsed_ucdp.csv'
 DATA_PATH_REMOTE = 'hdfs:////datasets/tweets-leon'
+
+DATA_PATH_LOCAL_STORAGE_FORMAT = 'file:////buffer/{}'
+SAVE_RETRY_ATTEMPTS = 3
 
 twitter_schema = [
 	'Language',
@@ -81,6 +86,19 @@ def fetch_data(source, spark_context):
 	ucdp_result_df = _convert_rdd_to_df(ucdp_result_rdd, ',', ucdp_schema)
 
 	return (twitter_result_df, ucdp_result_df)
+
+def save_data(dataframe, file_name):
+
+	failed_attempts = 0
+	while (failed_attempts < SAVE_RETRY_ATTEMPTS):
+		try:
+			dataframe.write.format('com.databricks.spark.csv').option('header', 'false').save(DATA_PATH_LOCAL_STORAGE_FORMAT.format(file_name))
+		except Exception as exception:
+			failed_attempts = failed_attempts + 1
+			log_print('({}) Failed saving attempt. Retrying [{}/{}]'.format(type(exception).__name__, failed_attempts, SAVE_RETRY_ATTEMPTS), 1)
+		else:
+			return
+	log_print('Maximum retry limit exceeded, giving up on action.', 2)
 
 '''
 For documentation purposes, this approach is A LOT slower (even though it's clearer):
