@@ -2,6 +2,8 @@ from pyspark.sql import DataFrame
 from statistics import Statistics
 from datetime import datetime
 
+PRINT_RETRY_ATTEMPTS = 3
+
 LOG_PRINT_FORMAT = '[{}/{}/{} {}:{}:{}] {} {}'
 LOG_LEVELS = ['INFO', 'WARN', 'ERROR']
 
@@ -18,15 +20,31 @@ def _print(message, level):
 		message
 	))
 
+def _show_dataframe(dataframe):
+	successfull_print = False
+	failed_attempts = 0
+	while (failed_attempts < PRINT_RETRY_ATTEMPTS + 1):
+		try:
+			dataframe.limit(5).show()
+		except Exception as exception:
+			failed_attempts = failed_attempts + 1
+			_print('({}) Failed sample attempt. Retrying [{}/{}]'.format(type(exception).__name__, failed_attempts, PRINT_RETRY_ATTEMPTS), 1)
+		else:
+			return
+	_print('Maximum retry limit exceeded, giving up on action.', 2)
+
+def _show_statistics(statistics):
+	if (statistics._is_enabled == True):
+		print(statistics)
+	else:
+		_print('"{}" statistics are DISABLED'.format(statistics._statistics_label), 1)
+
 def log_print(object, level=0):
 	if (isinstance(object, DataFrame)):
 		_print('Printing dataframe sample', level)
-		object.limit(5).show()
+		_show_dataframe(object)
 	elif (isinstance(object, Statistics)):
 		_print('Printing statistics summary', level)
-		if (object._is_enabled == True):
-			print(object, level)
-		else:
-			print('[{} | DISABLED]'.format(object._statistics_label))
+		_show_statistics(object)
 	else:
 		_print(object, level)
