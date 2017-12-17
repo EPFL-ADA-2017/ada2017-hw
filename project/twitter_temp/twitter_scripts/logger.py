@@ -23,7 +23,7 @@ def _print(message, level):
 def _show_dataframe(dataframe):
 	successfull_print = False
 	failed_attempts = 0
-	while (failed_attempts < PRINT_RETRY_ATTEMPTS + 1):
+	while (failed_attempts < PRINT_RETRY_ATTEMPTS):
 		try:
 			dataframe.limit(5).show()
 		except Exception as exception:
