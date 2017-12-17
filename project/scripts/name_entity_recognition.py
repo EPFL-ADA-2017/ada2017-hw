@@ -25,10 +25,10 @@ nlp = spacy.load('en')
 alpha_regex = re.compile('[^a-zA-Z]')
 
 # Paths for the matching countries, nationalities, religions and currencies
-parsed_country_nationality_file = 'data/parsed/parsed_country_nationality.csv'
-parsed_currency_country_file = 'data/parsed/parsed_currency_country.csv'
-parsed_country_religion_file = 'data/parsed/country_religion_files/parsed_country_religion.csv'
-parsed_country_cities_file = 'data/parsed/parsed_country_cities_grouped.csv'
+parsed_country_nationality_file = './../data/parsed/parsed_country_nationality.csv'
+parsed_currency_country_file = '../data/parsed/parsed_currency_country.csv'
+parsed_country_religion_file = '../data/parsed/country_religion_files/parsed_country_religion.csv'
+parsed_country_cities_file = '../data/parsed/parsed_country_cities_grouped.csv'
 
 # Load the necessary datasets
 country_nationality_df = pd.read_csv(parsed_country_nationality_file, encoding='utf-8', compression='gzip', index_col=False)
@@ -93,6 +93,47 @@ def get_matching_row(text, df, col_labels):
             return matching_df.iloc[0]
     return None
 
+def get_matching_results(label, text):
+    '''
+    From a provided identity's label and text,
+    this method returns a tuple (x, y) with
+    x being the entity text and y the specific
+    label (Country, City, etc) associated to such text.
+    '''
+    
+    # Check if it is a country/city
+    if label == 'GPE':
+        # Country check
+        result = get_matching_row(text, country_nationality_df, ['ID', 'Official Name', 'Common Name'])
+        if result is not None:
+            return (result, 'Country')
+        
+        # City check
+        result = get_matching_row(text, country_cities_df, ['City'])
+        if result is not None:
+            return (result, 'City')
+    
+    # Check if it is a nationality/religion
+    elif label == 'NORP':
+        # Nationality check
+        result = get_matching_row(text, country_nationality_df, ['Nationality'])
+        if result is not None:
+            return (result, 'Nationality')
+        
+        # Religion check
+        result = get_matching_row(text, country_religion_df, ['Religion', 'Affiliation'])
+        if result is not None:
+            return (result, 'Religion')
+    
+    # Check if it is a known currency
+    elif label == 'MONEY':
+        result = get_matching_row(text, currency_country_df, ['ID'])
+        if result is not None:
+            return (result, 'Currency')
+        
+    return (None, None)
+    
+
 def get_likely_results(label, text):
     '''
     From a provided identity's label and text,
@@ -101,38 +142,12 @@ def get_likely_results(label, text):
     Its keys are the country codes and its values
     their corresponding probabilities.
     '''
-    result = None
     
-    # Check if it is a country/city
-    if label == 'GPE':
-        # Country check
-        result = get_matching_row(text, country_nationality_df, ['ID', 'Official Name', 'Common Name'])
-        if result is not None:
-            return get_result_country_probability_dict(result, 'Country')
-        
-        # City check
-        result = get_matching_row(text, country_cities_df, ['City'])
-        if result is not None:
-            return get_result_country_probability_dict(result, 'City')
+    result, specific_label = get_matching_results(label, text)
     
-    # Check if it is a nationality/religion
-    elif label == 'NORP':
-        # Nationality check
-        result = get_matching_row(text, country_nationality_df, ['Nationality'])
-        if result is not None:
-            return get_result_country_probability_dict(result, 'Nationality')
-        
-        # Religion check
-        result = get_matching_row(text, country_religion_df, ['Religion', 'Affiliation'])
-        if result is not None:
-            return get_result_country_probability_dict(result, 'Religion')
+    if (result is not None) and (specific_label is not None):
+        return get_result_country_probability_dict(result, specific_label)
     
-    # Check if it is a known currency
-    elif label == 'MONEY':
-        result = get_matching_row(text, currency_country_df, ['ID'])
-        if result is not None:
-            return get_result_country_probability_dict(result, 'Currency')
-            
     return None
 
 def get_interesting_text_entities(text):
