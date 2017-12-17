@@ -20,10 +20,13 @@ def _print(message, level):
 
 def log_print(object, level=0):
 	if (isinstance(object, DataFrame)):
-		_print("Printing dataframe sample", level)
+		_print('Printing dataframe sample', level)
 		object.limit(5).show()
 	elif (isinstance(object, Statistics)):
-		_print("Printing statistics summary", level)
-		print(object, level)
+		_print('Printing statistics summary', level)
+		if (object._is_enabled == True):
+			print(object, level)
+		else:
+			print('[{} | DISABLED]'.format(object._statistics_label))
 	else:
 		_print(object, level)
