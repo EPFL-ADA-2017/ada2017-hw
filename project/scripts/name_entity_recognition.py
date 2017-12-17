@@ -25,10 +25,10 @@ nlp = spacy.load('en')
 alpha_regex = re.compile('[^a-zA-Z]')
 
 # Paths for the matching countries, nationalities, religions and currencies
-parsed_country_nationality_file = './../data/parsed/parsed_country_nationality.csv'
-parsed_currency_country_file = '../data/parsed/parsed_currency_country.csv'
-parsed_country_religion_file = '../data/parsed/country_religion_files/parsed_country_religion.csv'
-parsed_country_cities_file = '../data/parsed/parsed_country_cities_grouped.csv'
+parsed_country_nationality_file = 'data/parsed/parsed_country_nationality.csv'
+parsed_currency_country_file = 'data/parsed/parsed_currency_country.csv'
+parsed_country_religion_file = 'data/parsed/country_religion_files/parsed_country_religion.csv'
+parsed_country_cities_file = 'data/parsed/parsed_country_cities_grouped.csv'
 
 # Load the necessary datasets
 country_nationality_df = pd.read_csv(parsed_country_nationality_file, encoding='utf-8', compression='gzip', index_col=False)
