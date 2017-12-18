@@ -1,0 +1,196 @@
+%
+% File acl2014.tex
+%
+% Contact: giovanni.colavizza@epfl.ch
+%%
+%% Based on the style files for ACL-2013, which were, in turn,
+%% Based on the style files for ACL-2012, which were, in turn,
+%% based on the style files for ACL-2011, which were, in turn,
+%% based on the style files for ACL-2010, which were, in turn,
+%% based on the style files for ACL-IJCNLP-2009, which were, in turn,
+%% based on the style files for EACL-2009 and IJCNLP-2008...
+
+%% Based on the style files for EACL 2006 by
+%%e.agirre@ehu.es or Sergi.Balari@uab.es
+%% and that of ACL 08 by Joakim Nivre and Noah Smith
+
+\documentclass[11pt]{article}
+\usepackage{acl2014}
+\usepackage{times}
+\usepackage{url}
+\usepackage{latexsym}
+
+%\setlength\titlebox{5cm}
+
+% You can expand the titlebox if you need extra space
+% to show all the authors. Please do not make the titlebox
+% smaller than 5cm (the original size); we will check this
+% in the camera-ready version and ask you to change it back.
+
+
+\title{World conflicts' impact}
+
+\author{Nuno M. Mota Gon\c{c}alves \\
+  {\tt \small nuno.motagoncalves@epfl.ch} \\\And
+  Matteo Y. Feo \\
+  {\tt \small matteo.feo@epfl.ch} \\\And
+  Luc\'{i}a Montero Sanchis\\
+  {\tt \small lucia.monterosanchis@epfl.ch} \\}
+
+\date{}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+In this project we focus on certain conflicts that would be expected to arise public concern and obtain a numerical approximation of the sentimental impact that said conflicts have on Twitter. We then use the estimated impact for conflicts in several countries to try and find if the impact depends on the country of the conflict. We used the Uppsala Conflict Data Program (UCDP) dataset to identify comparable conflicts in different countries and continents. The main purpose of this project is to shed some light on world-wide situations to which the general public might be oblivious to.
+\end{abstract}
+
+\section{Introduction}
+
+For our project we decided to make use of both UCDP and Twitter datasets. From these, we would like to figure out any existing gaps in the information proliferation around the globe, regarding the conflicts' locations.
+
+As to how we will make that information clear, we decided to create a predictive model. This model takes a conflicts' category and country as features and tries to predict the sentimental impact on Twitter. To do this, we will use techniques like Named Entity Recognition and Sentiment Analysis to find out which Tweets are worth considering, for a given conflict, and their sentiment strength (not if they are positive, negative or neutral but their strength from 0.0 to 1.0). Analysing the sentiment strength before and after a conflict's start date, we would then define sentimental impact in the same range of values (from 0.0 to 1.0). Applying a threshold to the results would give us either impactful or not impactful - which is what our model will try to predict. Would people show stronger emotions towards a country where a conflict arose? Or would they seem to ignore this fact and maintain their normal behavior?
+
+Note: Remove stuff from here and instead introduce a bit of the methodology, i.e.  first select tweets around a conflict's date, then identify the tweets that refer to a certain country, then get their sentiment analysis, then measure the general sentiment analysis for tweets about that country on that date, then compare for dates before and after the conflict to measure the sentimental impact.
+
+
+\section{Related Work}
+Don't know what goes here. Maybe remove this section? I also tried to find articles on this but I could not find any.
+
+
+\section{Data Collection}
+(they say it should be brief) I'm not sure about this one, since I don't know if we should skip this section or maybe here we should explain other datasets that we use. Maybe we can change the name of this section and move it 1 or 2 sections below?
+
+
+\section{Dataset Description}
+(with summary statistics) focus on UCDP?? table with statistics per type of conflict? use only 2016?...
+(Next TODO)
+
+\section{Methods}
+(With math and description of main algorithms)
+I have to explain how and why I measure sentiment average and sentimental impact in those ways., for the first one I can reference a book.
+(Next TODO)
+
+\section{Results and Findings}
+
+\section{Conclusions}
+I don't know about this and the previous section yet.
+The next page contains some \emph{sample} things that I kept for reference.
+
+\newpage
+
+
+\section{General Instructions}
+Exceptions to the
+two-column format include full-width figures or tables (see the guidelines in
+Subsection \ref{ssec:first}).
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|l|rl|}
+\hline \bf Type of Text & \bf Font Size & \bf Style \\ \hline
+report title & 15 pt & bold \\
+author names & 12 pt & bold \\
+the word ``Abstract'' & 12 pt & bold \\
+section titles & 12 pt & bold \\
+document text & 11 pt  &\\
+captions & 11 pt & \\
+abstract text & 10 pt & \\
+bibliography & 10 pt & \\
+footnotes & 9 pt & \\
+\hline
+\end{tabular}
+\end{center}
+\caption{\label{font-table} Font guide.}
+\end{table}
+
+\subsection{The First Page}
+\label{ssec:first}
+Long titles should be typed on two lines
+without a blank line intervening. Approximately, put the title at 2.5
+cm from the top of the page, followed by a blank line, then the
+author's names(s).
+
+\subsection{Sections}
+
+{\bf Headings}: Do not number subsubsections.
+
+{\bf Citations}: Citations within the text appear in parentheses
+as~\cite{Gusfield:97} or, if the author's name appears in the text
+itself, as Gusfield~\shortcite{Gusfield:97}.  Append lowercase letters
+to the year in cases of ambiguity.  Treat double authors as
+in~\cite{Aho:72}, but write as in~\cite{Chandra:81} when more than two
+authors are involved. Collapse multiple citations as
+in~\cite{Gusfield:97,Aho:72}. Also refrain from using full citations
+as sentence constituents. We suggest that instead of
+\begin{quote}
+  ``\cite{Gusfield:97} showed that ...''
+\end{quote}
+you use
+\begin{quote}
+``Gusfield \shortcite{Gusfield:97}   showed that ...''
+\end{quote}
+
+\textbf{Please do not use anonymous citations}
+
+\textbf{References}: Gather the full set of references together under
+the heading {\bf References}. Arrange the references alphabetically
+by first author, rather than by order of occurrence in the text.
+Provide as complete a citation as possible, using a consistent format,
+such as the one for {\em Computational Linguistics\/} or the one in the
+{\em Publication Manual of the American
+Psychological Association\/}~\cite{APA:83}. Use of full names for
+authors rather than initials is preferred.  A list of abbreviations
+for common computer science journals can be found in the ACM
+{\em Computing Reviews\/}~\cite{ACM:83}.
+
+\subsection{Footnotes}
+
+{\bf Footnotes}: \footnote{This is how a footnote should appear.}
+
+\subsection{Graphics}
+
+{\bf Illustrations}: Place figures, tables, and photographs in the
+report near where they are first discussed, rather than at the end, if
+possible.  Wide illustrations may run across both columns.
+
+{\bf Captions}: Provide a caption for every illustration; number each one
+sequentially in the form:  ``Figure 1. Caption of the Figure.'' ``Table 1.
+Caption of the Table.''  captions of the figures and
+tables below the body.
+
+\begin{thebibliography}{}
+
+\bibitem[\protect\citename{Aho and Ullman}1972]{Aho:72}
+Alfred~V. Aho and Jeffrey~D. Ullman.
+\newblock 1972.
+\newblock {\em The Theory of Parsing, Translation and Compiling}, volume~1.
+\newblock Prentice-{Hall}, Englewood Cliffs, NJ.
+
+\bibitem[\protect\citename{{American Psychological Association}}1983]{APA:83}
+{American Psychological Association}.
+\newblock 1983.
+\newblock {\em Publications Manual}.
+\newblock American Psychological Association, Washington, DC.
+
+\bibitem[\protect\citename{{Association for Computing Machinery}}1983]{ACM:83}
+{Association for Computing Machinery}.
+\newblock 1983.
+\newblock {\em Computing Reviews}, 24(11):503--512.
+
+\bibitem[\protect\citename{Chandra \bgroup et al.\egroup }1981]{Chandra:81}
+Ashok~K. Chandra, Dexter~C. Kozen, and Larry~J. Stockmeyer.
+\newblock 1981.
+\newblock Alternation.
+\newblock {\em Journal of the Association for Computing Machinery},
+  28(1):114--133.
+
+\bibitem[\protect\citename{Gusfield}1997]{Gusfield:97}
+Dan Gusfield.
+\newblock 1997.
+\newblock {\em Algorithms on Strings, Trees and Sequences}.
+\newblock Cambridge University Press, Cambridge, UK.
+
+\end{thebibliography}
+
+\end{document}
