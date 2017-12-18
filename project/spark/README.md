@@ -10,7 +10,7 @@ This script needs one argument in order to be executed - the path to your python
 **Note:** The script also redirects all the output to files inside the *logs* directory - *script_output.log* and *spark_output.log*.
 
 ## Status script
-Since the submit script runs the process in detached mode and all the output gets redirected into files, this script provides an easy way to check whether or not your process, `screen`, is still running. After you run `./status`, you will either see `Running` or `Stopped`. You can then refer to the *logs* directory in order to find the results of your submission.
+Since the [submit script](https://github.com/nunomota/ada2017-hw/blob/master/project/spark/submit) runs the process in detached mode and all the output gets redirected into files, this script provides an easy way to check whether or not your process, `screen`, is still running. After you run `./status`, you will either see `Running` or `Stopped`. You can then refer to the *logs* directory in order to find the results of your submission.
 
 ## twitter_scripts directory
 Contains both the [twitter_parser.py](https://github.com/nunomota/ada2017-hw/blob/master/project/spark/twitter_scripts/twitter_parser.py), in charge of all the data-wise heavy-lifting, and all its auxiliary scripts.
