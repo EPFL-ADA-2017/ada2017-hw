@@ -31,12 +31,18 @@ parsed_country_religion_file = 'data/parsed/country_religion_files/parsed_countr
 parsed_country_cities_file = 'data/parsed/parsed_country_cities_grouped.csv'
 
 # Load the necessary datasets
-country_nationality_df = pd.DataFrame()
-currency_country_df = pd.DataFrame()
-country_religion_df = pd.DataFrame()
-country_cities_df = pd.DataFrame()
+country_nationality_df = None
+currency_country_df = None
+country_religion_df = None
+country_cities_df = None
 
-def load_data(data_directory_prefix):
+def load_data(data_directory_prefix='.'):
+    
+    # Set the scope to global for the following variables
+    global country_nationality_df
+    global currency_country_df
+    global country_religion_df
+    global country_cities_df
     
     # Update the file path
     new_parsed_country_nationality_file = '{}/{}'.format(data_directory_prefix, parsed_country_nationality_file)
