@@ -43,7 +43,7 @@ from pyspark import SparkContext
 from logger import log_print
 
 # Cnstants
-DATA_PATH_LOCAL_TWITTER = '/home/motagonc/ada2017-hw-private/project/twitter_temp/twitter_dataset/small_tweet_dataset'
+DATA_PATH_LOCAL_TWITTER = '/home/motagonc/ada2017-hw-private/project/spark/twitter_dataset/small_tweet_dataset'
 DATA_PATH_LOCAL_UCDP = '/home/motagonc/ada2017-hw-private/project/data/parsed/parsed_ucdp.csv'
 DATA_PATH_REMOTE = 'hdfs:////datasets/tweets-leon'
 
