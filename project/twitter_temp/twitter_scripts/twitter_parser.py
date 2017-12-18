@@ -3,9 +3,10 @@ import sys
 sys.path.append('/home/motagonc/ada2017-hw-private/project/scripts')
 
 # Imports
-from pyspark.sql.functions import abs, datediff, unix_timestamp, dayofmonth, year, month, udf
+from pyspark.sql.functions import datediff, unix_timestamp, dayofmonth, year, month, udf
+from pyspark.sql.functions import abs as pyspark_abs
 from pyspark import SparkContext, SQLContext
-from pyspark.sql.types import BooleanType
+from pyspark.sql.types import BooleanType, LongType
 from statistics import Statistics
 from timer import Timer
 from logger import log_print
@@ -22,7 +23,7 @@ sc.addPyFile('/home/motagonc/ada2017-hw-private/project/scripts/language_recogni
 
 # Fetch data
 log_print('Fetching data from datasets')
-twitter_df, ucdp_df = dh.fetch_data('local', sc)
+twitter_df, ucdp_df = dh.fetch_data('remote', sc)
 
 def filter_twitter_df(twitter_df):
 
@@ -81,18 +82,17 @@ def filter_twitter_df(twitter_df):
 
 def filter_ucdp_df(ucdp_df):
 
-	log_print('>> Start >> Filtering Twitter dataframe')
+	log_print('>> Start >> Filtering UCDP dataframe')
 
 	# statistics initialization
 	statistics = Statistics('UCDP Filter', False)
 
 	log_print('Parsing date format')
 	ucdp_date_format = "yyyy-MM-dd"
-	filtered_ucdp_df = ucdp_df.withColumn('Timestamp', unix_timestamp(ucdp_df['Date Start'], ucdp_date_format).cast('timestamp')) \
-				.drop(ucdp_df['Date Start']) \
-				.drop(ucdp_df['Date End'])
+	filtered_ucdp_df = ucdp_df.withColumn('Timestamp_2', unix_timestamp(ucdp_df['Date Start'], ucdp_date_format).cast('timestamp')) \
+				.select('ID', 'Timestamp_2')
 
-	log_print('<<  End  << Filtering Twitter dataframe')
+	log_print('<<  End  << Filtering UCDP dataframe')
 
 	return (filtered_ucdp_df, statistics)
 
@@ -107,7 +107,7 @@ def merge_dataframes_on_time_window(twitter_df, ucdp_df):
 
 	statistics.set_stage('Custom timestamp filter')
 	statistics.add_stats('Before', twitter_df)
-	merged_df = twitter_df.join(ucdp_df, datediff(twitter_df['Timestamp'], ucdp_df['Timestamp']) <= DEFAULT_TIME_WINDOW, 'inner')
+	merged_df = twitter_df.join(ucdp_df, pyspark_abs(datediff(twitter_df['Timestamp'], ucdp_df['Timestamp_2'])) <= DEFAULT_TIME_WINDOW, 'inner')
 	statistics.add_stats('After', merged_df)
 
 	log_print('<<  End  << Filtering on time window')
@@ -122,23 +122,30 @@ timer.start()
 twitter_df, twitter_statistics = filter_twitter_df(twitter_df)
 ucdp_df, ucdp_statistics = filter_ucdp_df(ucdp_df)
 
+# Further filter dataframe
+ucdp_df = ucdp_df.withColumn('Year', year(ucdp_df['Timestamp_2'])).withColumn('Month', month(ucdp_df['Timestamp_2'])).withColumn('Day', dayofmonth(ucdp_df['Timestamp_2']))
+ucdp_unique_years = ucdp_df.select('Year').distinct().rdd.map(lambda x: x[0]).collect()
+ucdp_unique_months = ucdp_df.select('Month').distinct().rdd.map(lambda x: x[0]).collect()
+log_print('Unique years found in UCDP: {}'.format(ucdp_unique_years))
+log_print('Unique months found in UCDP: {}'.format(ucdp_unique_months))
+log_print('Filtering Twitter based on UCDP dates')
+twitter_df = twitter_df.filter((year(twitter_df['Timestamp']).isin(ucdp_unique_years)) & (month(twitter_df['Timestamp']).isin(ucdp_unique_months)))
+
 # Merge dataframes based on time window
 merged_df, merged_statistics = merge_dataframes_on_time_window(twitter_df, ucdp_df)
 
 # Print statistics
 log_print(twitter_statistics)
 log_print(ucdp_statistics)
+#log_print(merged_statistics)
 
 # Display 5 entries
 log_print(twitter_df)
 log_print(ucdp_df)
-
-ucdp_df.repartition(ucdp_df['Country'])
-dh.save_data(ucdp_df, 'motagonc_ucdp_df_sample')
-
-# Display merged results
 #log_print(merged_df)
-#log_print(merged_statistics)
+
+# save merged results to disk
+#dh.save_data(merged_df, 'motagonc_merged_df_sample')
 
 # Display timer
 timer.stop()

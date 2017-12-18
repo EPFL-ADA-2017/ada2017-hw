@@ -21,16 +21,18 @@ def _print(message, level):
 	))
 
 def _show_dataframe(dataframe):
-	successfull_print = False
 	failed_attempts = 0
+	last_exception = None
 	while (failed_attempts < PRINT_RETRY_ATTEMPTS):
 		try:
 			dataframe.limit(5).show()
 		except Exception as exception:
 			failed_attempts = failed_attempts + 1
+			last_exception = exception
 			_print('({}) Failed sample attempt. Retrying [{}/{}]'.format(type(exception).__name__, failed_attempts, PRINT_RETRY_ATTEMPTS), 1)
 		else:
 			return
+	print(last_exception)
 	_print('Maximum retry limit exceeded, giving up on action.', 2)
 
 def _show_statistics(statistics):

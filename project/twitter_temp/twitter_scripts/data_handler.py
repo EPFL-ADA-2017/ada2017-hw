@@ -1,5 +1,6 @@
 import codecs
 import gzip
+import os, shutil
 
 from pyspark import SparkContext
 from logger import log_print
@@ -8,7 +9,8 @@ DATA_PATH_LOCAL_TWITTER = '/home/motagonc/ada2017-hw-private/project/twitter_tem
 DATA_PATH_LOCAL_UCDP = '/home/motagonc/ada2017-hw-private/project/data/parsed/parsed_ucdp.csv'
 DATA_PATH_REMOTE = 'hdfs:////datasets/tweets-leon'
 
-DATA_PATH_LOCAL_STORAGE_FORMAT = 'file:////buffer/{}'
+DATA_PATH_LOCAL_STORAGE_FORMAT = '/buffer/{}'
+DATA_PATH_LOCAL_STORAGE_SPARK_FORMAT = 'file:///{}'
 SAVE_RETRY_ATTEMPTS = 3
 
 twitter_schema = [
@@ -61,7 +63,7 @@ PUBLIC METHODS
 '''
 
 def download_data_sample(n_entries, spark_context):
-	twitter_sample_rows = _fetch_data_from_remote(spark_context).take(n_entries)
+	twitter_sample_rows = _fetch_twitter_data_from_remote(spark_context).take(n_entries)
 	with open(DATA_PATH_LOCAL_TWITTER, 'w') as local_file:
 		for sample in twitter_sample_rows:
 			encoded_sample = sample.encode('utf-8')
@@ -90,14 +92,27 @@ def fetch_data(source, spark_context):
 def save_data(dataframe, file_name):
 
 	failed_attempts = 0
+	last_exception = None
+	save_file_path = DATA_PATH_LOCAL_STORAGE_FORMAT.format(file_name)
 	while (failed_attempts < SAVE_RETRY_ATTEMPTS):
 		try:
-			dataframe.write.format('com.databricks.spark.csv').option('header', 'false').save(DATA_PATH_LOCAL_STORAGE_FORMAT.format(file_name))
+			if (os.path.exists(save_file_path)):
+				log_print('"{}" already exists'.format(save_file_path), 1)
+				if (os.path.isdir(save_file_path)):
+					log_print('Deleting directory: {}'.format(save_file_path), 1)
+					shutil.rmtree(save_file_path)
+				else:
+					log_print('Deleting file: {}'.format(save_file_path), 1)
+					os.remove(save_file_path)
+			log_print('Writing dataframe to file: {}'.format(save_file_path))
+			dataframe.write.format('com.databricks.spark.csv').option('header', 'false').save(DATA_PATH_LOCAL_STORAGE_SPARK_FORMAT.format(save_file_path))
 		except Exception as exception:
 			failed_attempts = failed_attempts + 1
+			last_exception = exception
 			log_print('({}) Failed saving attempt. Retrying [{}/{}]'.format(type(exception).__name__, failed_attempts, SAVE_RETRY_ATTEMPTS), 1)
 		else:
 			return
+	print(last_exception)
 	log_print('Maximum retry limit exceeded, giving up on action.', 2)
 
 '''
