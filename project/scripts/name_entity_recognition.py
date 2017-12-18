@@ -30,13 +30,19 @@ parsed_currency_country_file = 'data/parsed/parsed_currency_country.csv'
 parsed_country_religion_file = 'data/parsed/country_religion_files/parsed_country_religion.csv'
 parsed_country_cities_file = 'data/parsed/parsed_country_cities_grouped.csv'
 
-# Load the necessary datasets
+# Define the necessary datasets
 country_nationality_df = None
 currency_country_df = None
 country_religion_df = None
 country_cities_df = None
 
 def load_data(data_directory_prefix='.'):
+    '''
+    Load the necessary datasets declared as global
+    variables of the script. The path can be change according
+    to the relative position of the caller. No adjustments
+    need to be made when called from the parent folder.
+    '''
     
     # Set the scope to global for the following variables
     global country_nationality_df
