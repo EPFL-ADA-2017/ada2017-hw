@@ -1,13 +1,32 @@
+'''
+The logger is a simple set of functions to
+allow easier and clearer logging of our scripts.
+This will generate labeled, aligned and formatted
+printed lines - ideally always used instead of 
+regular prints.
+'''
+
+# Imports
 from pyspark.sql import DataFrame
 from statistics import Statistics
 from datetime import datetime
 
+# Constants
 PRINT_RETRY_ATTEMPTS = 3
 
 LOG_PRINT_FORMAT = '[{}/{}/{} {}:{}:{}] {} {}'
 LOG_LEVELS = ['INFO', 'WARN', 'ERROR']
 
+
+'''
+Private Functions
+'''
 def _print(message, level):
+	'''
+	This functions directly formats and prints
+	a certain message with a priority level and
+	the correspondant timestamp.
+	'''
 	current_datetime = datetime.now()
 	print(LOG_PRINT_FORMAT.format(
 		str(current_datetime.day).zfill(2),
@@ -21,6 +40,13 @@ def _print(message, level):
 	))
 
 def _show_dataframe(dataframe):
+	'''
+	This functions is called specifically
+	for DataFrames' representation. It avoids
+	weird formatting and action failure. If
+	the later happens, it retries up to 3 
+	times.
+	'''
 	failed_attempts = 0
 	last_exception = None
 	while (failed_attempts < PRINT_RETRY_ATTEMPTS):
@@ -36,12 +62,26 @@ def _show_dataframe(dataframe):
 	_print('Maximum retry limit exceeded, giving up on action.', 2)
 
 def _show_statistics(statistics):
+	'''
+	This function is called specifically 
+	for Statistics' representation. It avoids
+	unnecessary empty prints for disabled 
+	objects (simply warning the user instead).
+	'''
 	if (statistics._is_enabled == True):
 		print(statistics)
 	else:
 		_print('"{}" statistics are DISABLED'.format(statistics._statistics_label), 1)
 
+'''
+Public Functions
+'''
 def log_print(object, level=0):
+	'''
+	This function is called from within many
+	other modules, providing an easy way to
+	generate logging-friendly prints.
+	'''
 	if (isinstance(object, DataFrame)):
 		_print('Printing dataframe sample', level)
 		_show_dataframe(object)
