@@ -1,5 +1,13 @@
 import numpy as np
 
+def overall_sentiment(data):
+    """
+    Returns a number from -1.0 to 1.0 representing the overall sentiment.
+    It is computed as the mean over the non-outliers.
+    """
+    outliers_removed = data[is_outlier(data, thresh=2)]
+    return np.mean(outliers_removed)
+
 def is_outlier(data, thresh=3.5):
     """
     Returns a boolean array with True if points are outliers and False
@@ -22,13 +30,6 @@ def is_outlier(data, thresh=3.5):
         Handle Outliers", The ASQC Basic References in Quality Control:
         Statistical Techniques, Edward F. Mykytka, Ph.D., Editor.
     """
-    def overall_sentiment(data):
-        """
-        Returns a number from -1.0 to 1.0 representing the overall sentiment.
-        It is computed as the mean over the non-outliers.
-        """
-        outliers_removed = data[is_outlier(data, thresh=2)]
-        return np.mean(outliers_removed)
 
     diff = np.abs(data - np.median(data))
     m_dev = np.median(diff)
