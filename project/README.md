@@ -1,18 +1,20 @@
-# World conflicts' information proliferation
+# Sentimental impact of world events on the Twitter social netwrok
 
 ## Abstract
 
-For our project we decided to make use of both UCDP and Twitter datasets. From these, we would like to figure out any existing gaps in the information proliferation around the globe, regarding the conflicts' locations.
+The aim of our project is to quantify the *sentimental impact* of a certain world event, on the Twitter community. 
 
-As to *how* we will make that information clear, we decided to create a predictive model. This model takes a conflicts' *category* and *country* as features and tries to predict the *sentimental impact* on Twitter. To do this, we will use techniques like *Named Entity Recognition* and *Sentiment Analysis* to find out which Tweets are worth considering, for a given conflict, and their *sentiment strength* (not if they are *positive*, *negative* or *neutral* but their *strength* from 0.0 to 1.0). Analysing the *sentiment strength* before and after a conflict's start date, we would then define *sentimental impact* in the same range of values (from 0.0 to 1.0). Applying a threshold to the results would give us either *impactful* or *not impactful* - which is what our model will try to predict. Would people show stronger emotions towards a country where a conflict arose? Or would they seem to ignore this fact and maintain their normal behavior?
+In order to reach this goal we used the UCDP dataset, to focus on events (in this case conflicts) that would most likely raise international concern, along with a Twitter dataset we generated ourselves. For the latter, we used a Markov Chains model, trained on stories, geo-political and religious texts to create a sample dataset for us to use afterwards.
 
-We thought it would be interesting to shed some light on world-wide situations to which the general public might be oblivious to, hence our approach to the problem. Bear in mind, our purpose is not to figure out *why* these differences may exist (e.g. political or media influences) but *where* they exist.
+As to *how* we went about achieving our goals, we used techniques like *Language Recognition (LR)*, *Named Entiry Recognition (NER)* and *Sentiment Analysis (SA)*. All of these where applied to Tweets for us to be able to find out which ones would be worth considering for the analysis - basically filtering out all the Tweets that are not referencing a certain specific event. We then define *sentiment strength* with values from -1 to 1 (from the most negative to the most positive). To apply this measurement, we also filter out Tweets outside a time window centered on the conflict start's date, which then more accurately allows us to define the *impactfullness* of the event - this time in the range from 0 to 1 (from the least impactfull to the most impactfull).
+
+We try and clarify our point through our main notebook. There, we showcase our whole pipeline and our methodology, while discussing the pros and cons of our approach to the problem - through statistics and plotting.
 
 ## Research questions
 
-Is there a big emotional contrast, in Twiter, comparing *before* and *after* a conflict arises?
+How to measure emotional value over a time-frame?
 
-If so, is this more noticeable for certain categories of conflicts? Or does this vary by location?
+How to quantify emotional contrast, in Twiter, comparing *before* and *after* an event ocurs?
 
 ## Datasets
 
@@ -22,7 +24,7 @@ We opted to use two datasets:
 This dataset covers individual events of organized violence. We consider a subset of the conflicts in this dataset, and keep the relevant information for each of the conflicts.
 
 2. Twitter
-Through *Language Recognition*, we will only take into account the Tweets in English - so the emotions considered for our analysis are those of English-speaking Twitter users. We will also filter the dataset according to the date, keeping only the Tweets around certain time-frames.
+Because of time-constraints, in order to parse the dataset and retrieve the desired content, we decided that the approach wouldn't be possible for us. Therefore, we decided to implement our custom Tweet generator, using a Markov Chains based model.
 
 ### UCDP
 
@@ -31,12 +33,11 @@ Through *Language Recognition*, we will only take into account the Tweets in Eng
 
 ### Twitter
 
-  * We plan on keeping only the Tweets in English published a couple days away (before and after) from the kept conflicts' start dates.
-  * After the initial filtering, we need only the Tweets' *content* and their *date* (discarding any other information).
-  * For each time-frame, we do **Named Entity Recognition** (NER) to figure out the country it is talking about - discard all that don't mention countries of conflict.
+  * Before deciding to pivot on our final goal, we did attempt to fetch our data from the cluster (although to no avail). All the scripts used in these attempts are well documented and available within the Spark directory of the Project, complete with a full descriptive [README](https://github.com/nunomota/ada2017-hw/blob/master/project/spark/README.md) file of the overall process (the last section of the README represents all our considerations and possible improvements). 
+  * The *Language Recognition (LR)* module is used to retrieve only samples that are in English. It's important to note we made the assumption that the content of English Tweets alone is a good representation of the world's overall opinion.
+  * For each time-frame, we do **Named Entity Recognition** (NER) to figure out the country it is talking about - discard all that don't mention countries of the conflicts we want.
   * For the remaining Tweets, we apply **Sentiment Analysis** on the text and store that information alongside the Tweets.
   * We then define the **Sentimental Impact** as a measure that reflects the contrast between the average daily *sentiment strength* before and after the conflict.
-  * We now use this information to train our model, that we will use to predict the **Sentiment Impact** for certain conflicts (either real or hypothetical).
 
 ## Named Entity Recognition
 For **Named Entity Recognition** we make use of a **Natural Language Processing** library called [Spacy](https://spacy.io/). With it, we use each country's *code*, *name*, *cities*, *common denomination*, *nationality*, *currency* and an estimate of its *religious affiliation* ratios for identifying the country that is being talked about in a Tweet (if there is one). For everything except the *religious affiliations*, we will use [mledoze's dataset](https://mledoze.github.io/countries/) and [maxmind's dataset](https://www.maxmind.com/de/free-world-cities-database). For the last component, we will simply consider the most common affiliations and from [globalreligiousfutures dataset](http://globalreligiousfutures.org/explorer#/?subtopic=15&chartType=map&year=2010&data_type=number&religious_affiliation=55&destination=to&countries=Worldwide&age_group=all&gender=all&pdfMode=false).
@@ -48,15 +49,24 @@ For **Sentiment Analysis** we use [NLTK's Vader sentiment analyzer](http://www.n
 
 Although the main part of the project can be seen in the [project notebook](https://github.com/nunomota/ada2017-hw/blob/master/project/project.ipynb), there are other important directories than contain interesting information:
 
-* [parsers](https://github.com/nunomota/ada2017-hw/tree/master/project/parsers): Contains notebooks specifically designed to parse, filter and format the data from the used datasets
+* [parsers](https://github.com/nunomota/ada2017-hw/tree/master/project/parsers): Contains notebooks specifically designed to parse and format the data from the used datasets
 * [analyzers](https://github.com/nunomota/ada2017-hw/tree/master/project/analyzers): Contains notebooks that perform exploratory analysis on parsed datasets (to either help with feature selection or categorization)
+* [filters](https://github.com/nunomota/ada2017-hw/tree/master/project/filters): Contains notebooks designed to filters the data parsed in a previous step
 * [scripts](https://github.com/nunomota/ada2017-hw/tree/master/project/parsers): Contains python scripts to be used as modules for several steps of the project
 * [data](https://github.com/nunomota/ada2017-hw/tree/master/project/data): Contains both the *raw* and *parsed* datasets generated by our notebooks - for memory concerns, the *raw* directory is zipped
+* [spark](https://github.com/nunomota/ada2017-hw/tree/master/project/spark) : Contains python scripts used to attempt to retrieve the data from the Spark Cluster
 * [report](https://github.com/nunomota/ada2017-hw/tree/master/project/report): Contains the report for the project
 
-## Completed Milestones
+## Work Distribution
 
-1. Perform **Named Entity Recognition** on Tweets
-2. Perform **Sentiment Analysis** on Tweets
-3. Initial filtering on UCDP dataset
-4. Perform **Language Recognition** on Tweets
+Nuno Goncalves: Data collection, data parsing, Twitter generator, NER
+Lucia Montero: Data anlysis, data filtering, plotting
+Matteo Yann Feo: Spark, SA, LR
+
+Regardless of contribution areas, it's fair to say everyone contributed to every stepof the project.
+
+## Presentation planning
+
+Nuno Goncalves: Presentation preparation
+Lucia Montero: Poster
+Matteo Yann Feo: Poster

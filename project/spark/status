@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if pgrep -u "motagonc" -x "screen" > /dev/null
+then
+	echo "Running"
+else
+	echo "Stopped"
+fi

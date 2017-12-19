@@ -1,5 +1,5 @@
 '''
-Title: Setiment Analysis with NLTK
+Title: Sentiment Analysis with NLTK
 
 The purpose of this notebook is to perform **Sentiment Analysis** on Tweets. Instead of returning *negative*, *neutral* or *positive* we decided to return the *compound* value to reduce the margin of error while daily-averaging these results down the line.
 '''
