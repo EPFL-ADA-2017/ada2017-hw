@@ -32,252 +32,328 @@
 \title{Sentimental impact of world events on the Twitter social network}
 
 \author{Nuno M. Mota Gon\c{c}alves \\
-  {\tt \small nuno.motagoncalves@epfl.ch} \\\And
-  Matteo Y. Feo \\
-  {\tt \small matteo.feo@epfl.ch} \\\And
-  Luc\'{i}a Montero Sanchis\\
-  {\tt \small lucia.monterosanchis@epfl.ch} \\}
+	{\tt \small nuno.motagoncalves@epfl.ch} \\\And
+	Matteo Y. Feo \\
+	{\tt \small matteo.feo@epfl.ch} \\\And
+	Luc\'{i}a Montero Sanchis\\
+	{\tt \small lucia.monterosanchis@epfl.ch} \\}
 
 \date{}
 
 \begin{document}
-\maketitle
-\begin{abstract}
-The aim of this project is to quantify the \textit{sentimental impact} a certain world event had on the Twitter community. Taking into account the emotional value associated with a specific event - found through \textit{Language Recognition (LR)}, \textit{Name Entity Recognition (NER)} and \textit{Sentiment Analysis (SA)} - we are now able to define the \textit{impactfullness} of conflicts from the Uppsala Conflict Data Program (UCDP) on a scale from 0.0 to 1.0. At this stage, country-wide events are the most viably described by our system, although with further developments (and time) it could be fine-tuned with more sources of data. The preliminary results seem to be pretty consistent and, further down the line, we can easily foresee the development of a \textit{sentimental impact} prediction model for future events.
-\end{abstract}
-
-\section{Introduction}
-
-For our project we decided to make use of both UCDP and Twitter datasets. From these, we would like to figure out any existing gaps in the information proliferation around the globe, regarding the conflicts' locations.
-
-As to how we will make that information clear, we decided to create a predictive model. This model takes a conflicts' category and country as features and tries to predict the sentimental impact on Twitter. To do this, we will use techniques like Named Entity Recognition and Sentiment Analysis to find out which Tweets are worth considering, for a given conflict, and their sentiment strength (not if they are positive, negative or neutral but their strength from 0.0 to 1.0). Analysing the sentiment strength before and after a conflict's start date, we would then define sentimental impact in the same range of values (from 0.0 to 1.0). Applying a threshold to the results would give us either impactful or not impactful - which is what our model will try to predict. Would people show stronger emotions towards a country where a conflict arose? Or would they seem to ignore this fact and maintain their normal behavior?
-
-Note: Remove stuff from here and instead introduce a bit of the methodology, i.e.  first select tweets around a conflict's date, then identify the tweets that refer to a certain country, then get their sentiment analysis, then measure the general sentiment analysis for tweets about that country on that date, then compare for dates before and after the conflict to measure the sentimental impact.
-
-
-\section{Related Work}
-Don't know what goes here. Maybe remove this section? I also tried to find articles on this but I could not find any.
-
-
-\section{Data Collection}
-(they say it should be brief) I'm not sure about this one, since I don't know if we should skip this section or maybe here we should explain other datasets that we use. Maybe we can change the name of this section and move it 1 or 2 sections below?
-
-
-\section{Dataset Description}
-  \subsection{UCDP Dataset}
-  \label{sub:ucdp_dataset}
-  The UCDP dataset contains data for $133 012$ worldwide conflicts from 1989 until 2016. Other information available for  conflicts relevant for our analysis is:
-  \begin{itemize}
-    \item Type of violence - Categorical variable that classifies conflicts into \emph{State-Based},  \emph{Non-State} and \emph{One-Sided} violence.
-    \item Location - Coordinates, region and country are available. We are only interested in the country.
-    \item Start and end dates - They can be used to calculate the duration of the conflict.
-    \item Number of casualties - Both the total number and the casualties on each side involved are available. We consider only the total number.
-  \end{itemize}
-
-    \subsubsection*{UCDP Dataset Filtering}
-    \label{ssub:dataset_filtering}
-    Since the number of worldwide active users on Twitter has increased throughout the years ~\cite{arrojo2015social} and we are assuming that the topics covered in the tweets changed as well, we focus on conflicts that took place during 2016 - the most recent year. It is also more likely that the public reacts to certain types of violence over others, and therefore for our analysis we only consider the one-sided violence events. This type of violence represents 13.7\% of the conflicts in 2016, as well as 10.7\% of casualties in that year. Table \ref{tab:ucdp16stats} contains the statistics of these conflicts.
-
-    \begin{table}[h]
-      \begin{center}
-      \begin{tabular}{|l|r|r|r|}
-      \hline
-      & \bf Casualties & \bf Duration &
-      \begin{tabular}[c]{@{}c@{}}\bf N. per\\\bf country\end{tabular} \\
-      \hline
-      mean & 6.5 & 3 days & 22.9\\
-      std & 19.9 & 21 days & 33.8\\
-      min & 0 & 0 days & 1\\
-      25\% & 1 & 0 days & 2\\
-      50\% & 2 & 0 days & 6\\
-      75\% & 5 & 0 days & 25.5\\
-      max & 324 & 334 days & 106\\
-      \hline
-      count & \multicolumn{3}{|c|}{893}\\
-      \hline
-      \end{tabular}
-      \end{center}
-      \caption{\label{tab:ucdp16stats} Statistics for one-sided conflicts in 2016}
-    \end{table}
-
-    As shown in the table, the number of casualties per conflict varies from 0 to 324. We assume that the public reaction will be higher for conflicts with casualties and as a result only conflicts with casualties are considered.
-
-    Table \ref{tab:ucdp16stats} also includes the number of conflicts per each country, since we are assuming that the general public is likely to lose interest on the violent events that take place in a country where conflicts are very frequent. Therefore for this analysis we consider only the countries where there were at most three one-sided violent conflicts with casualties during 2016.
-
-    The statistics for the final filtered conflicts are shown in Table \ref{tab:ucdp16fstats}. The result is 30 conflicts from 18 different countries.
-
-    \begin{table}[h]
-      \begin{center}
-      \begin{tabular}{|l|r|r|r|}
-      \hline
-      & \bf Casualties & \bf Duration &
-      \begin{tabular}[c]{@{}c@{}}\bf N. per\\\bf country\end{tabular} \\
-      \hline
-      mean & 8 & 0 days & 1.67 \\
-      std & 16.9 & 1 days & 0.69 \\
-      min & 1 & 0 days & 1 \\
-      25\% & 1 & 0 days & 1 \\
-      50\% & 2 & 0 days & 2 \\
-      75\% & 5 & 0 days & 2 \\
-      max & 86 & 5 days & 3 \\
-      \hline
-      count & \multicolumn{3}{|c|}{30}\\
-      \hline
-      \end{tabular}
-      \end{center}
-      \caption{\label{tab:ucdp16fstats} Statistics for filtered conflicts}
-    \end{table}
-
-  \subsection{Other Datasets}
-  \label{sub:other_datasets}
-    Explain here the datasets used for NER, etc (?)
-\section{Methods}
-(With math and description of main algorithms)
-I have to explain how and why I measure sentiment average and sentimental impact in those ways., for the first one I can reference a book.
-(Next TODO)
-  \subsection{Language Recognition}
-  \label{sub:language_recognition}
-    I'm not sure about including this one!
-
-  \subsection{Named Entity Recognition}
-  \label{sub:named_entity_recognition}
-    For each time-frame, we do Named Entity Recognition (NER) to figure out the country it is talking about - discard all that don't mention countries of conflict.
-
-  \subsection{Sentiment Analysis}
-  \label{sub:sentiment_analysis}
-    For the remaining Tweets, we apply Sentiment Analysis on the text and store that information alongside the Tweets.
-
-  \subsection{Sentimental Impact Measurement}
-  \label{sub:sentimental_impact_measurement}
-    We then define the Sentimental Impact as a measure that reflects the contrast between the average daily sentiment strength before and after the conflict.
-
-\section{Results and Findings}
-With the current schema of the report (based on the README for milestone 2) I think we would not have anything to write here.
-
-\section{Conclusions}
-I don't know about this and the previous section yet.
-The next page contains some \emph{sample} things that I kept for reference.
-
-\newpage
-
-
-\section{General Instructions}
-Exceptions to the
-two-column format include full-width figures or tables (see the guidelines in
-Subsection \ref{ssec:first}).
-
-\begin{table}[h]
-\begin{center}
-\begin{tabular}{|l|rl|}
-\hline \bf Type of Text & \bf Font Size & \bf Style \\ \hline
-report title & 15 pt & bold \\
-author names & 12 pt & bold \\
-the word ``Abstract'' & 12 pt & bold \\
-section titles & 12 pt & bold \\
-document text & 11 pt  &\\
-captions & 11 pt & \\
-abstract text & 10 pt & \\
-bibliography & 10 pt & \\
-footnotes & 9 pt & \\
-\hline
-\end{tabular}
-\end{center}
-\caption{\label{font-table} Font guide.}
-\end{table}
-
-\subsection{The First Page}
-\label{ssec:first}
-Long titles should be typed on two lines
-without a blank line intervening. Approximately, put the title at 2.5
-cm from the top of the page, followed by a blank line, then the
-author's names(s).
-
-\subsection{Sections}
-
-{\bf Headings}: Do not number subsubsections.
-
-{\bf Citations}: Citations within the text appear in parentheses
-as~\cite{Gusfield:97} or, if the author's name appears in the text
-itself, as Gusfield~\shortcite{Gusfield:97}.  Append lowercase letters
-to the year in cases of ambiguity.  Treat double authors as
-in~\cite{Aho:72}, but write as in~\cite{Chandra:81} when more than two
-authors are involved. Collapse multiple citations as
-in~\cite{Gusfield:97,Aho:72}. Also refrain from using full citations
-as sentence constituents. We suggest that instead of
-\begin{quote}
-  ``\cite{Gusfield:97} showed that ...''
-\end{quote}
-you use
-\begin{quote}
-``Gusfield \shortcite{Gusfield:97}   showed that ...''
-\end{quote}
-
-\textbf{Please do not use anonymous citations}
-
-\textbf{References}: Gather the full set of references together under
-the heading {\bf References}. Arrange the references alphabetically
-by first author, rather than by order of occurrence in the text.
-Provide as complete a citation as possible, using a consistent format,
-such as the one for {\em Computational Linguistics\/} or the one in the
-{\em Publication Manual of the American
-Psychological Association\/}~\cite{APA:83}. Use of full names for
-authors rather than initials is preferred.  A list of abbreviations
-for common computer science journals can be found in the ACM
-{\em Computing Reviews\/}~\cite{ACM:83}.
-
-\subsection{Footnotes}
-
-{\bf Footnotes}: \footnote{This is how a footnote should appear.}
-
-\subsection{Graphics}
-
-{\bf Illustrations}: Place figures, tables, and photographs in the
-report near where they are first discussed, rather than at the end, if
-possible.  Wide illustrations may run across both columns.
-
-{\bf Captions}: Provide a caption for every illustration; number each one
-sequentially in the form:  ``Figure 1. Caption of the Figure.'' ``Table 1.
-Caption of the Table.''  captions of the figures and
-tables below the body.
-
-\begin{thebibliography}{}
-
-\bibitem[\protect\citename{Arrojo}2015]{arrojo2015social}
-Maria Jose Arrojo.
-\newblock 2015.
-\newblock {\em International Journal of Social Science Studies}, volume~3.
-\newblock Prentice-{Hall}, Englewood Cliffs, NJ.
-
-\bibitem[\protect\citename{Aho and Ullman}1972]{Aho:72}
-Alfred~V. Aho and Jeffrey~D. Ullman.
-\newblock 1972.
-\newblock {\em The Theory of Parsing, Translation and Compiling}, volume~1.
-\newblock Prentice-{Hall}, Englewood Cliffs, NJ.
-
-\bibitem[\protect\citename{{American Psychological Association}}1983]{APA:83}
-{American Psychological Association}.
-\newblock 1983.
-\newblock {\em Publications Manual}.
-\newblock American Psychological Association, Washington, DC.
-
-\bibitem[\protect\citename{{Association for Computing Machinery}}1983]{ACM:83}
-{Association for Computing Machinery}.
-\newblock 1983.
-\newblock {\em Computing Reviews}, 24(11):503--512.
-
-\bibitem[\protect\citename{Chandra \bgroup et al.\egroup }1981]{Chandra:81}
-Ashok~K. Chandra, Dexter~C. Kozen, and Larry~J. Stockmeyer.
-\newblock 1981.
-\newblock Alternation.
-\newblock {\em Journal of the Association for Computing Machinery},
-  28(1):114--133.
-
-\bibitem[\protect\citename{Gusfield}1997]{Gusfield:97}
-Dan Gusfield.
-\newblock 1997.
-\newblock {\em Algorithms on Strings, Trees and Sequences}.
-\newblock Cambridge University Press, Cambridge, UK.
-
-\end{thebibliography}
-
+	\maketitle
+	\begin{abstract}
+		The aim of this project is to quantify the \textit{sentimental impact} a certain
+		world event had on the Twitter community. Taking into account the emotional
+		value associated with a specific event - found through \textit{Language
+			Recognition (LR)}, \textit{Name Entity Recognition (NER)} and \textit{Sentiment
+			Analysis (SA)} - we are now able to define the \textit{impactfullness} of
+		conflicts from the Uppsala Conflict Data Program (UCDP) on a scale from 0.0 to
+		1.0. At this stage, country-wide events are the most viably described by our
+		system, although with further developments (and time) it could be fine-tuned
+		with more sources of data. The preliminary results seem to be pretty consistent
+		and, further down the line, we can easily foresee the development of a
+		\textit{sentimental impact} prediction model for future events.
+	\end{abstract}
+	
+	\section{Introduction}
+	
+	For our project we initially decided to use of both UCDP and Twitter-leon
+	datasets. Because of time-constraints, however, we ended replacing the latter
+	with our own Twitter dataset created using a Markov Chains based model. This
+	model, trained on stories, geo-political and religious texts, basically
+	generates Tweets on several different subjects.
+	
+	From the combination of the UCDP and Twitter datasets we were now using, we
+	wanted to understand how we could match certain Tweets to a given event and then
+	evaluate the emotional value of the event itself - based on the retrieved
+	information. By using \textit{LR}, \textit{NER} and \textit{SA}, although
+	limited to the English language, we manged to draw the desired correspondence.
+	It's important to note we made the assumption that the content of English Tweets
+	alone is a good representation of the world's overall opinion (which may
+	introduce a Western Country preference to the analysis).
+	
+	As to how we will make that information clear, we decided to showcase scenarios
+	in which we pipeline our methodology and discuss the pros and cons of our
+	approach to the problem - through statistics and plotting. In the end, every
+	scenario will have its \textit{sentimental impact} evaluated and compared to
+	other scenarios.
+	
+	
+	\section{Related Work}
+	Don't know what goes here. Maybe remove this section? I also tried to find
+	articles on this but I could not find any.
+	
+	
+	\section{Data Collection}
+	(they say it should be brief) I'm not sure about this one, since I don't know if
+	we should skip this section or maybe here we should explain other datasets that
+	we use. Maybe we can change the name of this section and move it 1 or 2 sections
+	below?
+	
+	
+	\section{Dataset Description}
+	\subsection{UCDP Dataset}
+	\label{sub:ucdp_dataset}
+	The UCDP dataset contains data for $133 012$ worldwide conflicts from 1989
+	until 2016. Other information available for  conflicts relevant for our analysis
+	is:
+	\begin{itemize}
+		\item Type of violence - Categorical variable that classifies conflicts into
+		\emph{State-Based},  \emph{Non-State} and \emph{One-Sided} violence.
+		\item Location - Coordinates, region and country are available. We are only
+		interested in the country.
+		\item Start and end dates - They can be used to calculate the duration of
+		the conflict.
+		\item Number of casualties - Both the total number and the casualties on
+		each side involved are available. We consider only the total number.
+	\end{itemize}
+	
+	\subsubsection*{UCDP Dataset Filtering}
+	\label{ssub:dataset_filtering}
+	We first assumed the more recent year's Twitter population should be more
+	representative of nowadays reactions to the same events we are studying.
+	Moreover, since the number of worldwide active users on Twitter has increased
+	throughout the years ~\cite{arrojo2015social}, we ultimately decided to focus on
+	conflicts that took place during 2016 - last year contained in the datasets. On
+	top of that, it is also more likely that the public reacts to certain types of
+	violence over others - and therefore we opted to analyze \textit{one-sided
+		violence} events. This type of violence represents 13.7\% of the conflicts in
+	2016, as well as 10.7\% of casualties in that year. Table \ref{tab:ucdp16stats}
+	contains the statistics of these conflicts.
+	
+	\begin{table}[h]
+		\begin{center}
+			\begin{tabular}{|l|r|r|r|}
+				\hline
+				& \bf Casualties & \bf Duration &
+				\begin{tabular}[c]{@{}c@{}}\bf N. per\\\bf country\end{tabular} \\
+				\hline
+				mean & 6.5 & 3 days & 22.9\\
+				std & 19.9 & 21 days & 33.8\\
+				min & 0 & 0 days & 1\\
+				25\% & 1 & 0 days & 2\\
+				50\% & 2 & 0 days & 6\\
+				75\% & 5 & 0 days & 25.5\\
+				max & 324 & 334 days & 106\\
+				\hline
+				count & \multicolumn{3}{|c|}{893}\\
+				\hline
+			\end{tabular}
+		\end{center}
+		\caption{\label{tab:ucdp16stats} Statistics for one-sided conflicts in
+			2016}
+	\end{table}
+	
+	As shown in the table, the number of casualties per conflict varies from 0
+	to 324. We assume that the public reaction will be higher for conflicts with
+	casualties and, as a result, only conflicts with casualties are considered.
+	
+	Table \ref{tab:ucdp16stats} also includes the number of conflicts per
+	country, since we are assuming that the general public is likely to lose
+	'interest' (meaning they probably won't show drastic changes on their behavior)
+	on the violent events that take place in a country where conflicts are very
+	frequent. Therefore we also only consider the countries where there were, at
+	most, three one-sided violent conflicts with casualties during 2016.
+	
+	The statistics for the final filtered conflicts are shown in Table
+	\ref{tab:ucdp16fstats}. The result is 30 conflicts from 18 different countries.
+	
+	\begin{table}[h]
+		\begin{center}
+			\begin{tabular}{|l|r|r|r|}
+				\hline
+				& \bf Casualties & \bf Duration &
+				\begin{tabular}[c]{@{}c@{}}\bf N. per\\\bf country\end{tabular} \\
+				\hline
+				mean & 8 & 0 days & 1.67 \\
+				std & 16.9 & 1 days & 0.69 \\
+				min & 1 & 0 days & 1 \\
+				25\% & 1 & 0 days & 1 \\
+				50\% & 2 & 0 days & 2 \\
+				75\% & 5 & 0 days & 2 \\
+				max & 86 & 5 days & 3 \\
+				\hline
+				count & \multicolumn{3}{|c|}{30}\\
+				\hline
+			\end{tabular}
+		\end{center}
+		\caption{\label{tab:ucdp16fstats} Statistics for filtered conflicts}
+	\end{table}
+	
+	\subsection{Other Datasets}
+	\label{sub:other_datasets}
+	More than identifying entities in a text using our NER model, we want to identify which countries they might be referring to specifically. To
+	achieve this, we basically used several public datasets datasets (such as ... TODO) to create bilateral word associations between: countries, cities, nationalities, religions, religious affiliations and currencies. 
+	\section{Methods}
+	(With math and description of main algorithms)
+	I have to explain how and why I measure sentiment average and sentimental impact
+	in those ways., for the first one I can reference a book.
+	(Next TODO)
+	\subsection{Language Recognition}
+	\label{sub:language_recognition}
+	For this stage we basically use an underlying library, langdetect, to filter out foreign tweets.
+	
+	\subsection{Named Entity Recognition}
+	\label{sub:named_entity_recognition}
+	As stated before, our main goal is to find the country a certain Tweet is talking about. To this end we use the Spacy library and its NER models trained on OntoNotes 5 (giving us plenty of labels to work with). Even though the association from a country's name or nationality might be straightforward, religions and currencies tend to reference many different countries. As such, our NER module calculates the overall probability of each country in three steps:
+	\begin{enumerate}
+		\item For each identified identity, use the word association to find all the countries the word might be referencing and assign each a probability of $\frac{1}{N}$, where $N$ represents the number of total countries associated.
+		\item From all the country-probability sets created in the previous step, we now generate a single set based on their union. For countries that exist for several entities, we add their probabilities.
+		\item Finally, we do a normalization of the probability set $p$:
+		\begin{equation}
+		p_i = \frac{p_{i}}{\sum_{j=1}^{|p|} p_j}
+		\end{equation}
+	\end{enumerate}
+	
+	From these probabilities, we assume that the Tweet is talking about a certain country IFF:
+	\begin{equation}
+	p_{i} = \max_{1 \leq j \leq |p|} p_{j} \wedge p_{i} \ge threshold
+	\end{equation}
+	where $threshold \in [0, 1[$.
+	
+	\subsection{Sentiment Analysis}
+	\label{sub:sentiment_analysis}
+	For sentiment analysis we used \textit{NLTK's Vader sentiment analyzer}. We then associate the composite value from its computation it with the corresponding Tweet. This value will always be within $[-1, 1]$.
+	
+	\subsection{Daily Sentimental Strength}
+	\label{sub:daily_sentiment_strength}
+	TODO
+	
+	\subsection{Sentimental Impact Measurement}
+	\label{sub:sentimental_impact_measurement}
+	We then define the Sentimental Impact as a measure that reflects the
+	contrast between the average daily sentiment strength before and after the
+	conflict.
+	TODO
+	
+	\section{Results and Findings}
+	Although the NER module is pretty accurate, we identified a lot of cases in which word capitalization had direct impact on whether or not it would be able to find a specific word. Although expectable, due to the training provided by OntoNotes 5, applying capitalization operations to the whole text (e.g uppercase, lowercase and titlecase) before passing it onto the module did not improve its accuracy in any type of entity. Capitalizing only nouns would improve our results but, since the model can't identify those nouns in the first place, we would have to rely on other sources in order to do it.
+	
+	\section{Conclusions}
+	Looking at all our results, we ended up with a pipeline that would allow us to achieve our objective - to measure the \textit{sentimental impact} of an event on a Tweet dataset. Although using an automatic Tweet generator (along with manually created Tweets) greatly helped us testing and improving our implementation, for the most part it represents synthetic data. To take this project to the next level, we would need to gather enough real-world data to fully prove our methodology. Moreover, we strongly believe that following this line of thought one could use events' features to train a predictive model based on its \textit{impactfullness}.
+	
+	\newpage
+	
+	
+	\section{General Instructions}
+	Exceptions to the
+	two-column format include full-width figures or tables (see the guidelines in
+	Subsection \ref{ssec:first}).
+	
+	\begin{table}[h]
+		\begin{center}
+			\begin{tabular}{|l|rl|}
+				\hline \bf Type of Text & \bf Font Size & \bf Style \\ \hline
+				report title & 15 pt & bold \\
+				author names & 12 pt & bold \\
+				the word ``Abstract'' & 12 pt & bold \\
+				section titles & 12 pt & bold \\
+				document text & 11 pt  &\\
+				captions & 11 pt & \\
+				abstract text & 10 pt & \\
+				bibliography & 10 pt & \\
+				footnotes & 9 pt & \\
+				\hline
+			\end{tabular}
+		\end{center}
+		\caption{\label{font-table} Font guide.}
+	\end{table}
+	
+	\subsection{The First Page}
+	\label{ssec:first}
+	Long titles should be typed on two lines
+	without a blank line intervening. Approximately, put the title at 2.5
+	cm from the top of the page, followed by a blank line, then the
+	author's names(s).
+	
+	\subsection{Sections}
+	
+	{\bf Headings}: Do not number subsubsections.
+	
+	{\bf Citations}: Citations within the text appear in parentheses
+	as~\cite{Gusfield:97} or, if the author's name appears in the text
+	itself, as Gusfield~\shortcite{Gusfield:97}.  Append lowercase letters
+	to the year in cases of ambiguity.  Treat double authors as
+	in~\cite{Aho:72}, but write as in~\cite{Chandra:81} when more than two
+	authors are involved. Collapse multiple citations as
+	in~\cite{Gusfield:97,Aho:72}. Also refrain from using full citations
+	as sentence constituents. We suggest that instead of
+	\begin{quote}
+		``\cite{Gusfield:97} showed that ...''
+	\end{quote}
+	you use
+	\begin{quote}
+		``Gusfield \shortcite{Gusfield:97}   showed that ...''
+	\end{quote}
+	
+	\textbf{Please do not use anonymous citations}
+	
+	\textbf{References}: Gather the full set of references together under
+	the heading {\bf References}. Arrange the references alphabetically
+	by first author, rather than by order of occurrence in the text.
+	Provide as complete a citation as possible, using a consistent format,
+	such as the one for {\em Computational Linguistics\/} or the one in the
+	{\em Publication Manual of the American
+		Psychological Association\/}~\cite{APA:83}. Use of full names for
+	authors rather than initials is preferred.  A list of abbreviations
+	for common computer science journals can be found in the ACM
+	{\em Computing Reviews\/}~\cite{ACM:83}.
+	
+	\subsection{Footnotes}
+	
+	{\bf Footnotes}: \footnote{This is how a footnote should appear.}
+	
+	\subsection{Graphics}
+	
+	{\bf Illustrations}: Place figures, tables, and photographs in the
+	report near where they are first discussed, rather than at the end, if
+	possible.  Wide illustrations may run across both columns.
+	
+	{\bf Captions}: Provide a caption for every illustration; number each one
+	sequentially in the form:  ``Figure 1. Caption of the Figure.'' ``Table 1.
+	Caption of the Table.''  captions of the figures and
+	tables below the body.
+	
+	\begin{thebibliography}{}
+		
+		\bibitem[\protect\citename{Arrojo}2015]{arrojo2015social}
+		Maria Jose Arrojo.
+		\newblock 2015.
+		\newblock {\em International Journal of Social Science Studies}, volume~3.
+		\newblock Prentice-{Hall}, Englewood Cliffs, NJ.
+		
+		\bibitem[\protect\citename{Aho and Ullman}1972]{Aho:72}
+		Alfred~V. Aho and Jeffrey~D. Ullman.
+		\newblock 1972.
+		\newblock {\em The Theory of Parsing, Translation and Compiling}, volume~1.
+		\newblock Prentice-{Hall}, Englewood Cliffs, NJ.
+		
+		\bibitem[\protect\citename{{American Psychological Association}}1983]{APA:83}
+		{American Psychological Association}.
+		\newblock 1983.
+		\newblock {\em Publications Manual}.
+		\newblock American Psychological Association, Washington, DC.
+		
+		\bibitem[\protect\citename{{Association for Computing Machinery}}1983]{ACM:83}
+		{Association for Computing Machinery}.
+		\newblock 1983.
+		\newblock {\em Computing Reviews}, 24(11):503--512.
+		
+		\bibitem[\protect\citename{Chandra \bgroup et al.\egroup }1981]{Chandra:81}
+		Ashok~K. Chandra, Dexter~C. Kozen, and Larry~J. Stockmeyer.
+		\newblock 1981.
+		\newblock Alternation.
+		\newblock {\em Journal of the Association for Computing Machinery},
+		28(1):114--133.
+		
+		\bibitem[\protect\citename{Gusfield}1997]{Gusfield:97}
+		Dan Gusfield.
+		\newblock 1997.
+		\newblock {\em Algorithms on Strings, Trees and Sequences}.
+		\newblock Cambridge University Press, Cambridge, UK.
+		
+	\end{thebibliography}
+	
 \end{document}
+
