@@ -1,13 +1,5 @@
 import numpy as np
 
-def overall_sentiment(data):
-    """
-    Returns a number from -1.0 to 1.0 representing the overall sentiment.
-    It is computed as the mean over the non-outliers.
-    """
-    outliers_removed = data[is_outlier(data, thresh=2)]
-    return np.mean(outliers_removed)
-
 def is_outlier(data, thresh=3.5):
     """
     Returns a boolean array with True if points are outliers and False
@@ -30,81 +22,52 @@ def is_outlier(data, thresh=3.5):
         Handle Outliers", The ASQC Basic References in Quality Control:
         Statistical Techniques, Edward F. Mykytka, Ph.D., Editor.
     """
+    def overall_sentiment(data):
+        """
+        Returns a number from -1.0 to 1.0 representing the overall sentiment.
+        It is computed as the mean over the non-outliers.
+        """
+        outliers_removed = data[is_outlier(data, thresh=2)]
+        return np.mean(outliers_removed)
+
     diff = np.abs(data - np.median(data))
     m_dev = np.median(diff)
     modified_z_score = 0.6745 * diff / m_dev if m_dev else 0.
     return modified_z_score > thresh
 
 
-def measure_changes(slist, maximum=1.0, minimum=-1.0):
-    # Get signs of the difference between consecutive elements
-    diff_slist = np.diff(slist)
-    diff_sign = np.sign(diff_slist)
-    
-    # np.sign considers 0 to have a different sign from 1 and -1
-    if diff_sign[0] == 0:
-        diff_sign[0] = 1
-    sz = diff_sign == 0
-    while sz.any():
-        diff_sign[sz] = np.roll(diff_sign, 1)[sz]
-        sz = diff_sign == 0
-        
-    # Get 1 where difference changes sign
-    changes = ((np.roll(diff_sign, 1) - diff_sign) != 0).astype(int)
-    # Fix the fact that np.roll does a circular shift
-    changes[0] = 0
-    # Obtain indices where diff_sign changes
-    changes_ind = np.where(changes == 1)[0]
-    changes_ind = np.append(changes_ind, len(slist))
-    
-    # Obtain accumulated sums for slices of diff_slist with same sign
-    acc_diff = np.array([])
-    prev_i = 0
-    for i in changes_ind:
-        inc = np.sum(diff_slist[prev_i:i])
-        prev_i = i
-        acc_diff = np.append(acc_diff, inc)
-    # Return the change measurement
-    if len(acc_diff) == 0:
-        # No changes
-        return 0
-    else:
+def measure_impact(timeframe):
+    """
+    Assuming a symmetric timeframe centered on the conflict date,
+    it returns the impact of the conflict in daily average sentiment by
+    comparing the changes in sentiment that take place before and
+    after a conflict date.
+
+    It uses an auxiliary function to measure the change in
+    sentiment before and after the conflict date. Both measures
+    take a value in the interval [0.0, 1.0]. Then, the absolute value
+    of the difference is returned.
+
+    It does not penalize how long it takes for the average sentiment
+    to change (accounting for the fact that the public might take longer
+    to learn about and react to certain conflicts, e.g. due to changes
+    in timezone.
+    """
+    def measure_changes(slist, maximum=1.0, minimum=-1.0):
         # Return main change plus if there where posterior changes
-        main_change = max(abs(acc_diff))
+        main_change = abs(max(slist) - min(slist))
         # Obtain maximum possible value to normalize (range [0, 1.0])
         maximum_value = maximum - minimum
         return main_change / maximum_value
 
-def measure_impact(timeframe):
-    """
-    Measures the sentiment impact by comparing the changes in the
-    first and second half of the array.
-    Assuming a symmetric timeframe, it returns the impact of the
-    conflict in daily average sentiment.
-    
-    Makes use of two auxiliary functions to measure the change in
-    sentiment before and after the conflict date. Both measures
-    take a value in the interval [0.0, 1.0]
-    
-    It penalizes having large change measurements before the conflict.
-    It does not penalize how long it takes for the average sentiment
-    to change (accounting for the fact that the public might take longer
-    to learn about and react to certain conflicts, e.g. due to changes
-    in timezone. 
-
-    TODO: I don't quite get why zigzag after conflict should result
-    in higher score than just a constant value after conflict...
-    TODO: I don't know if I should take more into account the biggest change
-    (advantage: it might be when people realized about the conflict;
-     disadvantage: it might not make any sense at all since this change might
-     not be related to the conflict anymore?)
-    or the first change (advantage: I don't ignore previous changes, and I
-     can be more sure that the change is due to the conflict)
-    """
     # Divide timeframe in two (before and after conflict)
-    n_b = int(len(timeframe/2)+1
+    n_b = int(len(timeframe)/2)
     tf_b = timeframe[:n_b]
     tf_a = timeframe[n_b:]
+    if len(timeframe) % 2 == 0:
+        # If we have an even number of elements in the timeframe
+        # we include the previous day as well
+        np.insert(tf_a, 0, tf_b[-1])
     # Measure changes after conflict, compared to right before conflict
     before_impact = measure_changes(tf_b)
     after_impact = measure_changes(tf_a)
