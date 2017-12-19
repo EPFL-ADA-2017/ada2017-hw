@@ -20,6 +20,7 @@
 \usepackage{url}
 \usepackage{latexsym}
 \usepackage{multirow}
+\usepackage{graphicx}
 
 %\setlength\titlebox{5cm}
 
@@ -177,7 +178,7 @@
 	\subsection{Other Datasets}
 	\label{sub:other_datasets}
 	More than identifying entities in a text using our NER model, we want to identify which countries they might be referring to specifically. To
-	achieve this, we basically used several public datasets datasets (such as those present the data directory) to create bilateral word associations between: countries, cities, nationalities, religions, religious affiliations and currencies. 
+	achieve this, we basically used several public datasets, to create bilateral word associations between: countries, cities, nationalities, religions, religious affiliations and currencies. 
 	\section{Methods}
 	\subsection{Language Recognition}
 	\label{sub:language_recognition}
@@ -208,7 +209,7 @@
 	\subsection{Daily Sentimental Strength}
 	\label{sub:daily_sentiment_strength}
 	Before we analyze the impact of an event, we wanted to measure the \textit{sentiment strength} on a daily basis, using all of the Tweets for that specific date. For this step, we want to penalize outliers. We mainly want to focus on the 'clustering' of the \textit{sentiment strength} over that day so random, overly-emotional tweets should not affect our final measure.
-	To do that, we define an \textit{outlier} following  For a given set of values $d$:
+	To do that, we define an \textit{outlier} following ~\cite{cite22} For a given set of values $d$:
 	\begin{equation}
 	f_{i} = |d_{i} - \tilde{d}|
 	\end{equation} 
@@ -228,7 +229,15 @@
 	\end{equation} 
 	
 	where $r \in [-1, 1]$ and represents the final result for our \textit{daily sentiment strength}.
-	
+
+	For instance, for the set of points shown in Figure 1 the daily average obtained is -0.483.
+
+	\begin{figure}[htp]
+	    \centering
+	    \includegraphics[width=0.45\textwidth]{histsent.png}
+	    \caption{Skewed normal distribution}
+	\end{figure}
+
 	\subsection{Sentimental Impact Measurement}
 	\label{sub:sentimental_impact_measurement}
 	On this stage, however, we do not want to penalize outliers. Since we are going to calculate \textit{sentimental impact} over the \textit{daily sentiment strengths}, we assume that big differences between successive values means they were triggered by an event. Instead, we actually want higher values to strongly define the final result we get (which means there was a big impact). 
@@ -244,7 +253,14 @@
 	\end{equation}
 	
 	where $r \in [0, 1]$ and represents our final measurement for \textit{sentimental impact}. We are aware that this measurement completely ignores sentimental 'aftershocks' (emotional fluctuations that might be visible after the occurrence of a given event) but this is a desired characteristic since we are comparing single day conflicts with multiple-day conflicts. The same behavior shifted within the time-frame (maybe a delayed response) will represent the same final value but conflicts that impact people several times (multiple-day) will not be considered more \textit{impactfull} just because of their duration.
-	
+
+	For the example in Figure 2, the impact measured is 0.735.
+	\begin{figure}[htp]
+	    \centering
+	    \includegraphics[width=0.45\textwidth]{dailyavg.png}
+	    \caption{Daily average sentiments}
+	\end{figure}
+
 	\section{Results and Findings}
 	Although the NER module is pretty accurate, we identified a lot of cases in which word capitalization had direct impact on whether or not it would be able to find a specific word. Although expectable, due to the training provided by OntoNotes 5, applying capitalization operations to the whole text (e.g uppercase, lowercase and titlecase) before passing it onto the module did not improve its accuracy in any type of entity. Capitalizing only nouns would improve our results but, since the model can't identify those nouns in the first place, we would have to rely on other sources in order to do it.
 	
@@ -261,36 +277,12 @@
 		\newblock {\em International Journal of Social Science Studies}, volume~3.
 		\newblock Prentice-{Hall}, Englewood Cliffs, NJ.
 		
-		\bibitem[\protect\citename{Aho and Ullman}1972]{Aho:72}
-		Alfred~V. Aho and Jeffrey~D. Ullman.
-		\newblock 1972.
-		\newblock {\em The Theory of Parsing, Translation and Compiling}, volume~1.
-		\newblock Prentice-{Hall}, Englewood Cliffs, NJ.
-		
-		\bibitem[\protect\citename{{American Psychological Association}}1983]{APA:83}
-		{American Psychological Association}.
-		\newblock 1983.
-		\newblock {\em Publications Manual}.
-		\newblock American Psychological Association, Washington, DC.
-		
-		\bibitem[\protect\citename{{Association for Computing Machinery}}1983]{ACM:83}
-		{Association for Computing Machinery}.
-		\newblock 1983.
-		\newblock {\em Computing Reviews}, 24(11):503--512.
-		
-		\bibitem[\protect\citename{Chandra \bgroup et al.\egroup }1981]{Chandra:81}
-		Ashok~K. Chandra, Dexter~C. Kozen, and Larry~J. Stockmeyer.
-		\newblock 1981.
-		\newblock Alternation.
-		\newblock {\em Journal of the Association for Computing Machinery},
-		28(1):114--133.
-		
-		\bibitem[\protect\citename{Gusfield}1997]{Gusfield:97}
-		Dan Gusfield.
-		\newblock 1997.
-		\newblock {\em Algorithms on Strings, Trees and Sequences}.
-		\newblock Cambridge University Press, Cambridge, UK.
-		
+		\bibitem[\protect\citename{Iglewicz}1993]{cite22}
+		Boris Iglewicz and David Hoaglin.
+		\newblock 1993.
+		\newblock {\em The ASQC Basic References in Quality Control:
+        Statistical Techniques}, volume~16.
+		\newblock Edward F. Mykytka, Ph.D., Editor.
 	\end{thebibliography}
 	
 \end{document}
