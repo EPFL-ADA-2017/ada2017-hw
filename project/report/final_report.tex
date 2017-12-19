@@ -177,12 +177,8 @@
 	\subsection{Other Datasets}
 	\label{sub:other_datasets}
 	More than identifying entities in a text using our NER model, we want to identify which countries they might be referring to specifically. To
-	achieve this, we basically used several public datasets datasets (such as ... TODO) to create bilateral word associations between: countries, cities, nationalities, religions, religious affiliations and currencies. 
+	achieve this, we basically used several public datasets datasets (such as those present the data directory) to create bilateral word associations between: countries, cities, nationalities, religions, religious affiliations and currencies. 
 	\section{Methods}
-	(With math and description of main algorithms)
-	I have to explain how and why I measure sentiment average and sentimental impact
-	in those ways., for the first one I can reference a book.
-	(Next TODO)
 	\subsection{Language Recognition}
 	\label{sub:language_recognition}
 	For this stage we basically use an underlying library, langdetect, to filter out foreign tweets.
@@ -207,12 +203,12 @@
 	
 	\subsection{Sentiment Analysis}
 	\label{sub:sentiment_analysis}
-	For sentiment analysis we used \textit{NLTK's Vader sentiment analyzer}. We then associate the composite value from its computation it with the corresponding Tweet. This value will always be within $[-1, 1]$.
+	For sentiment analysis we used \textit{NLTK's Vader sentiment analyzer}. We then associate the composite value from its computation with the corresponding Tweet. This value will always be within $[-1, 1]$.
 	
 	\subsection{Daily Sentimental Strength}
 	\label{sub:daily_sentiment_strength}
 	Before we analyze the impact of an event, we wanted to measure the \textit{sentiment strength} on a daily basis, using all of the Tweets for that specific date. For this step, we want to penalize outliers. We mainly want to focus on the 'clustering' of the \textit{sentiment strength} over that day so random, overly-emotional tweets should not affect our final measure.
-	To do that, we define an \textit{outlier} following ...TODO.... For a given set of values $d$:
+	To do that, we define an \textit{outlier} following  For a given set of values $d$:
 	\begin{equation}
 	f_{i} = |d_{i} - \tilde{d}|
 	\end{equation} 
