@@ -235,6 +235,9 @@ def get_most_likely_countries(country_probability_dict):
     Returns a list of the countries with 
     the highest probabilty in a dictionary.
     '''
+    if not country_probability_dict:
+        return []
+    
     max_prob = max(list(country_probability_dict.values()))
     return [country for country, probability in country_probability_dict.items() if math.isclose(probability, max_prob)]
 
