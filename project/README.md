@@ -2,11 +2,13 @@
 
 ## Abstract
 
-For our project we decided to make use of both UCDP and Twitter datasets. From these, we would like to figure out any existing gaps in the information proliferation around the globe, regarding the conflicts' locations.
+The aim of the project is to quantify the *sentimental impact* a certain world event, as conflicts around the globe, had on the Twitter community. 
 
-As to *how* we will make that information clear, we decided to create a predictive model. This model takes a conflicts' *category* and *country* as features and tries to predict the *sentimental impact* on Twitter. To do this, we will use techniques like *Named Entity Recognition* and *Sentiment Analysis* to find out which Tweets are worth considering, for a given conflict, and their *sentiment strength* (not if they are *positive*, *negative* or *neutral* but their *strength* from 0.0 to 1.0). Analysing the *sentiment strength* before and after a conflict's start date, we would then define *sentimental impact* in the same range of values (from 0.0 to 1.0). Applying a threshold to the results would give us either *impactful* or *not impactful* - which is what our model will try to predict. Would people show stronger emotions towards a country where a conflict arose? Or would they seem to ignore this fact and maintain their normal behavior?
+In order to reach this goal, we have used the UCDP dataset, as our focus is centered around conflicts, along with a Twitter samples dataset we delivered. For the latter, we have have trained a model, based on Markov Chains, on stories, geo-political and religious texts to generate Twitter samples and populate the dataset.
 
-We thought it would be interesting to shed some light on world-wide situations to which the general public might be oblivious to, hence our approach to the problem. Bear in mind, our purpose is not to figure out *why* these differences may exist (e.g. political or media influences) but *where* they exist.
+As to *how* we will deliver the task, we have used techniques like *Language Recognition (LR)*, *Named Entiry Recognition (NER)* and *Sentiment Analysis (SA)* to find out which Tweets are worth considering for the analysis in relation to a certain conflic of interest. We can therefore define the *sentiment strength* characteristic (not if they are *positive*, *negative* or *neutral* but their *strength* from 0.0 to 1.0) of such tweet's samples. Analysing the *sentiment strength* around a time window (before and after) centered on the conflict start's date, we have been able to define the *impactfullness* of the event in the same range of values (from 0.0 to 1.0).
+
+We will make that information clear by showcasing scenarios in which we pipeline our methodology while discussing the pros and cons of our approach to the problem - through statistics and plotting - while tackling each step into the analysis.
 
 ## Research questions
 
