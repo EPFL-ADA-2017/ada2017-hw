@@ -19,6 +19,7 @@
 \usepackage{times}
 \usepackage{url}
 \usepackage{latexsym}
+\usepackage{multirow}
 
 %\setlength\titlebox{5cm}
 
@@ -63,15 +64,95 @@ Don't know what goes here. Maybe remove this section? I also tried to find artic
 
 
 \section{Dataset Description}
-(with summary statistics) focus on UCDP?? table with statistics per type of conflict? use only 2016?...
-(Next TODO)
+  \subsection{UCDP Dataset}
+  \label{sub:ucdp_dataset}
+  The UCDP dataset contains data for $133 012$ worldwide conflicts from 1989 until 2016. Other information available for  conflicts relevant for our analysis is:
+  \begin{itemize}
+    \item Type of violence - Categorical variable that classifies conflicts into \emph{State-Based},  \emph{Non-State} and \emph{One-Sided} violence.
+    \item Location - Coordinates, region and country are available. We are only interested in the country.
+    \item Start and end dates - They can be used to calculate the duration of the conflict.
+    \item Number of casualties - Both the total number and the casualties on each side involved are available. We consider only the total number.
+  \end{itemize}
 
+    \subsubsection*{UCDP Dataset Filtering}
+    \label{ssub:dataset_filtering}
+    Since the number of worldwide active users on Twitter has increased throughout the years ~\cite{arrojo2015social} and we are assuming that the topics covered in the tweets changed as well, we focus on conflicts that took place during 2016 - the most recent year. It is also more likely that the public reacts to certain types of violence over others, and therefore for our analysis we only consider the one-sided violence events. This type of violence represents 13.7\% of the conflicts in 2016, as well as 10.7\% of casualties in that year. Table \ref{tab:ucdp16stats} contains the statistics of these conflicts.
+
+    \begin{table}[h]
+      \begin{center}
+      \begin{tabular}{|l|r|r|r|}
+      \hline
+      & \bf Casualties & \bf Duration &
+      \begin{tabular}[c]{@{}c@{}}\bf N. per\\\bf country\end{tabular} \\
+      \hline
+      mean & 6.5 & 3 days & 22.9\\
+      std & 19.9 & 21 days & 33.8\\
+      min & 0 & 0 days & 1\\
+      25\% & 1 & 0 days & 2\\
+      50\% & 2 & 0 days & 6\\
+      75\% & 5 & 0 days & 25.5\\
+      max & 324 & 334 days & 106\\
+      \hline
+      count & \multicolumn{3}{|c|}{893}\\
+      \hline
+      \end{tabular}
+      \end{center}
+      \caption{\label{tab:ucdp16stats} Statistics for one-sided conflicts in 2016}
+    \end{table}
+
+    As shown in the table, the number of casualties per conflict varies from 0 to 324. We assume that the public reaction will be higher for conflicts with casualties and as a result only conflicts with casualties are considered.
+
+    Table \ref{tab:ucdp16stats} also includes the number of conflicts per each country, since we are assuming that the general public is likely to lose interest on the violent events that take place in a country where conflicts are very frequent. Therefore for this analysis we consider only the countries where there were at most three one-sided violent conflicts with casualties during 2016.
+
+    The statistics for the final filtered conflicts are shown in Table \ref{tab:ucdp16fstats}. The result is 30 conflicts from 18 different countries.
+
+    \begin{table}[h]
+      \begin{center}
+      \begin{tabular}{|l|r|r|r|}
+      \hline
+      & \bf Casualties & \bf Duration &
+      \begin{tabular}[c]{@{}c@{}}\bf N. per\\\bf country\end{tabular} \\
+      \hline
+      mean & 8 & 0 days & 1.67 \\
+      std & 16.9 & 1 days & 0.69 \\
+      min & 1 & 0 days & 1 \\
+      25\% & 1 & 0 days & 1 \\
+      50\% & 2 & 0 days & 2 \\
+      75\% & 5 & 0 days & 2 \\
+      max & 86 & 5 days & 3 \\
+      \hline
+      count & \multicolumn{3}{|c|}{30}\\
+      \hline
+      \end{tabular}
+      \end{center}
+      \caption{\label{tab:ucdp16fstats} Statistics for filtered conflicts}
+    \end{table}
+
+  \subsection{Other Datasets}
+  \label{sub:other_datasets}
+    Explain here the datasets used for NER, etc (?)
 \section{Methods}
 (With math and description of main algorithms)
 I have to explain how and why I measure sentiment average and sentimental impact in those ways., for the first one I can reference a book.
 (Next TODO)
+  \subsection{Language Recognition}
+  \label{sub:language_recognition}
+    I'm not sure about including this one!
+
+  \subsection{Named Entity Recognition}
+  \label{sub:named_entity_recognition}
+    For each time-frame, we do Named Entity Recognition (NER) to figure out the country it is talking about - discard all that don't mention countries of conflict.
+
+  \subsection{Sentiment Analysis}
+  \label{sub:sentiment_analysis}
+    For the remaining Tweets, we apply Sentiment Analysis on the text and store that information alongside the Tweets.
+
+  \subsection{Sentimental Impact Measurement}
+  \label{sub:sentimental_impact_measurement}
+    We then define the Sentimental Impact as a measure that reflects the contrast between the average daily sentiment strength before and after the conflict.
 
 \section{Results and Findings}
+With the current schema of the report (based on the README for milestone 2) I think we would not have anything to write here.
 
 \section{Conclusions}
 I don't know about this and the previous section yet.
@@ -160,6 +241,12 @@ Caption of the Table.''  captions of the figures and
 tables below the body.
 
 \begin{thebibliography}{}
+
+\bibitem[\protect\citename{Arrojo}2015]{arrojo2015social}
+Maria Jose Arrojo.
+\newblock 2015.
+\newblock {\em International Journal of Social Science Studies}, volume~3.
+\newblock Prentice-{Hall}, Englewood Cliffs, NJ.
 
 \bibitem[\protect\citename{Aho and Ullman}1972]{Aho:72}
 Alfred~V. Aho and Jeffrey~D. Ullman.
