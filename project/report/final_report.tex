@@ -58,7 +58,7 @@
 	
 	\section{Introduction}
 	
-	For our project we initially decided to use of both UCDP and Twitter-leon
+	For our project we initially decided to use both UCDP and Twitter-leon
 	datasets. Because of time-constraints, however, we ended replacing the latter
 	with our own Twitter dataset created using a Markov Chains based model. This
 	model, trained on stories, geo-political and religious texts, basically
@@ -219,14 +219,43 @@
 	
 	\subsection{Daily Sentimental Strength}
 	\label{sub:daily_sentiment_strength}
-	TODO
+	Before we analyze the impact of an event, we wanted to measure the \textit{sentiment strength} on a daily basis, using all of the Tweets for that specific date. For this step, we want to penalize outliers. We mainly want to focus on the 'clustering' of the \textit{sentiment strength} over that day so random, overly-emotional tweets should not affect our final measure.
+	To do that, we define an \textit{outlier} following ...TODO.... For a given set of values $d$:
+	\begin{equation}
+	f_{i} = |d_{i} - \tilde{d}|
+	\end{equation} 
+	\begin{equation}
+	g_{i} = 0.6745 * \frac{f_{i}}{\tilde{f}}
+	\end{equation}
+	\begin{equation}
+	h_{i} = \left\{
+	\begin{array}{lr}
+	1 & : g_{i} > threshold\\
+	0 & : g_{i} \leq threshold
+	\end{array}
+	\right.
+	\end{equation}
+	\begin{equation}
+	r = \frac{\sum_{i=1}^{|d|} d_{i} * h_{i}}{\sum_{j=1}^{|h|} h_{j}}
+	\end{equation} 
+	
+	where $r \in [-1, 1[$ and represents the final result for our \textit{daily sentiment strength}.
 	
 	\subsection{Sentimental Impact Measurement}
 	\label{sub:sentimental_impact_measurement}
-	We then define the Sentimental Impact as a measure that reflects the
-	contrast between the average daily sentiment strength before and after the
-	conflict.
-	TODO
+	On this stage, however, we do not want to penalize outliers. Since we are going to calculate \textit{sentimental impact} over the \textit{daily sentiment strengths}, we assume that big differences between successive values means they were triggered by an event. Instead, we actually want higher values to strongly define the final result we get (which means there was a big impact). 
+	For a set of daily averages, evenly spread around a certain date of an event, we split them into $b$ and $a$ sets - each representing the values before and after the date of the event respectively. The exact day of the event is always considered to be the first day in the $a$ set.
+	\begin{equation}
+	f = |\max_{1 \leq i \leq |b|} b_{i} - \min_{1 \leq i \leq |b|} b_{i}|
+	\end{equation}
+	\begin{equation}
+	g = |\max_{1 \leq i \leq |a|} a_{i} - \min_{1 \leq i \leq |a|} a_{i}|
+	\end{equation}
+	\begin{equation}
+	r = |g - f|
+	\end{equation}
+	
+	where $r \in [0, 1[$ and represents our final measurement for \textit{sentimental impact}. We are aware that this measurement completely ignores sentimental 'aftershocks' (emotional fluctuations that might be visible after the occurrence of a given event) but this is a desired characteristic since we are comparing single day conflicts with multiple-day conflicts. The same behavior shifted within the time-frame (maybe a delayed response) will represent the same value and conflicts that successively may impact people (multiple-day ones) will not be considered more \textit{impactfull} just because of their duration.
 	
 	\section{Results and Findings}
 	Although the NER module is pretty accurate, we identified a lot of cases in which word capitalization had direct impact on whether or not it would be able to find a specific word. Although expectable, due to the training provided by OntoNotes 5, applying capitalization operations to the whole text (e.g uppercase, lowercase and titlecase) before passing it onto the module did not improve its accuracy in any type of entity. Capitalizing only nouns would improve our results but, since the model can't identify those nouns in the first place, we would have to rely on other sources in order to do it.
