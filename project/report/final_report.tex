@@ -79,19 +79,11 @@
 	scenario will have its \textit{sentimental impact} evaluated and compared to
 	other scenarios.
 	
-	To describe our work in more detail, we split our report into several sections: (2) Related work - ...; (3) Data Collection - ...; (4) Data set description - where we both state which datasets we used for our project and describe our initial treatment of their data; (5) Methodology - showing how we made use of certain libraries and our datasets to achieve our goal; (6) Results and Findings - contains some considerations about certain parts of the project; and (7) Conclusions - our final remarks and future improvements on this idea.
-	
-	\section{Related Work}
-	Don't know what goes here. Maybe remove this section? I also tried to find
-	articles on this but I could not find any.
+	To describe our work in more detail, we split our report into several sections: (2) Data Collection - ...; (3) Data set description - where we both state which datasets we used for our project and describe our initial treatment of their data; (4) Methodology - showing how we made use of certain libraries and our datasets to achieve our goal; (5) Results and Findings - contains some considerations about certain parts of the project; and (6) Conclusions - our final remarks and future improvements on this idea.
 	
 	
 	\section{Data Collection}
-	(they say it should be brief) I'm not sure about this one, since I don't know if
-	we should skip this section or maybe here we should explain other datasets that
-	we use. Maybe we can change the name of this section and move it 1 or 2 sections
-	below?
-	
+	Since we ended up not using the Twitter-leon dataset, all the data we used came from locally downloaded datasets. All of them are public and where acquired in either CSV or JSON format.
 	
 	\section{Dataset Description}
 	\subsection{UCDP Dataset}
@@ -239,7 +231,7 @@
 	r = \frac{\sum_{i=1}^{|d|} d_{i} * h_{i}}{\sum_{j=1}^{|h|} h_{j}}
 	\end{equation} 
 	
-	where $r \in [-1, 1[$ and represents the final result for our \textit{daily sentiment strength}.
+	where $r \in [-1, 1]$ and represents the final result for our \textit{daily sentiment strength}.
 	
 	\subsection{Sentimental Impact Measurement}
 	\label{sub:sentimental_impact_measurement}
@@ -255,7 +247,7 @@
 	r = |g - f|
 	\end{equation}
 	
-	where $r \in [0, 1[$ and represents our final measurement for \textit{sentimental impact}. We are aware that this measurement completely ignores sentimental 'aftershocks' (emotional fluctuations that might be visible after the occurrence of a given event) but this is a desired characteristic since we are comparing single day conflicts with multiple-day conflicts. The same behavior shifted within the time-frame (maybe a delayed response) will represent the same final value but conflicts that impact people several times (multiple-day) will not be considered more \textit{impactfull} just because of their duration.
+	where $r \in [0, 1]$ and represents our final measurement for \textit{sentimental impact}. We are aware that this measurement completely ignores sentimental 'aftershocks' (emotional fluctuations that might be visible after the occurrence of a given event) but this is a desired characteristic since we are comparing single day conflicts with multiple-day conflicts. The same behavior shifted within the time-frame (maybe a delayed response) will represent the same final value but conflicts that impact people several times (multiple-day) will not be considered more \textit{impactfull} just because of their duration.
 	
 	\section{Results and Findings}
 	Although the NER module is pretty accurate, we identified a lot of cases in which word capitalization had direct impact on whether or not it would be able to find a specific word. Although expectable, due to the training provided by OntoNotes 5, applying capitalization operations to the whole text (e.g uppercase, lowercase and titlecase) before passing it onto the module did not improve its accuracy in any type of entity. Capitalizing only nouns would improve our results but, since the model can't identify those nouns in the first place, we would have to rely on other sources in order to do it.
@@ -264,86 +256,6 @@
 	Looking at all our results, we ended up with a pipeline that would allow us to achieve our objective - to measure the \textit{sentimental impact} of an event on a Tweet dataset. Although using an automatic Tweet generator (along with manually created Tweets) greatly helped us testing and improving our implementation, for the most part it represents synthetic data. To take this project to the next level, we would need to gather enough real-world data to fully prove our methodology. Moreover, we strongly believe that following this line of thought one could use events' features to train a predictive model based on its \textit{impactfullness}.
 	
 	\newpage
-	
-	
-	\section{General Instructions}
-	Exceptions to the
-	two-column format include full-width figures or tables (see the guidelines in
-	Subsection \ref{ssec:first}).
-	
-	\begin{table}[h]
-		\begin{center}
-			\begin{tabular}{|l|rl|}
-				\hline \bf Type of Text & \bf Font Size & \bf Style \\ \hline
-				report title & 15 pt & bold \\
-				author names & 12 pt & bold \\
-				the word ``Abstract'' & 12 pt & bold \\
-				section titles & 12 pt & bold \\
-				document text & 11 pt  &\\
-				captions & 11 pt & \\
-				abstract text & 10 pt & \\
-				bibliography & 10 pt & \\
-				footnotes & 9 pt & \\
-				\hline
-			\end{tabular}
-		\end{center}
-		\caption{\label{font-table} Font guide.}
-	\end{table}
-	
-	\subsection{The First Page}
-	\label{ssec:first}
-	Long titles should be typed on two lines
-	without a blank line intervening. Approximately, put the title at 2.5
-	cm from the top of the page, followed by a blank line, then the
-	author's names(s).
-	
-	\subsection{Sections}
-	
-	{\bf Headings}: Do not number subsubsections.
-	
-	{\bf Citations}: Citations within the text appear in parentheses
-	as~\cite{Gusfield:97} or, if the author's name appears in the text
-	itself, as Gusfield~\shortcite{Gusfield:97}.  Append lowercase letters
-	to the year in cases of ambiguity.  Treat double authors as
-	in~\cite{Aho:72}, but write as in~\cite{Chandra:81} when more than two
-	authors are involved. Collapse multiple citations as
-	in~\cite{Gusfield:97,Aho:72}. Also refrain from using full citations
-	as sentence constituents. We suggest that instead of
-	\begin{quote}
-		``\cite{Gusfield:97} showed that ...''
-	\end{quote}
-	you use
-	\begin{quote}
-		``Gusfield \shortcite{Gusfield:97}   showed that ...''
-	\end{quote}
-	
-	\textbf{Please do not use anonymous citations}
-	
-	\textbf{References}: Gather the full set of references together under
-	the heading {\bf References}. Arrange the references alphabetically
-	by first author, rather than by order of occurrence in the text.
-	Provide as complete a citation as possible, using a consistent format,
-	such as the one for {\em Computational Linguistics\/} or the one in the
-	{\em Publication Manual of the American
-		Psychological Association\/}~\cite{APA:83}. Use of full names for
-	authors rather than initials is preferred.  A list of abbreviations
-	for common computer science journals can be found in the ACM
-	{\em Computing Reviews\/}~\cite{ACM:83}.
-	
-	\subsection{Footnotes}
-	
-	{\bf Footnotes}: \footnote{This is how a footnote should appear.}
-	
-	\subsection{Graphics}
-	
-	{\bf Illustrations}: Place figures, tables, and photographs in the
-	report near where they are first discussed, rather than at the end, if
-	possible.  Wide illustrations may run across both columns.
-	
-	{\bf Captions}: Provide a caption for every illustration; number each one
-	sequentially in the form:  ``Figure 1. Caption of the Figure.'' ``Table 1.
-	Caption of the Table.''  captions of the figures and
-	tables below the body.
 	
 	\begin{thebibliography}{}
 		
