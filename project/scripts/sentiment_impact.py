@@ -4,9 +4,13 @@ def overall_sentiment(data):
     """
     Returns a number from -1.0 to 1.0 representing the overall sentiment.
     It is computed as the mean over the non-outliers.
+    If there is very little data, then
     """
     outliers_removed = data[is_outlier(data, thresh=2)]
-    return np.mean(outliers_removed)
+    if len(outliers_removed) == 0:
+        return np.mean(data)
+    else:
+        return np.mean(outliers_removed)
 
 def is_outlier(data, thresh=3.5):
     """
