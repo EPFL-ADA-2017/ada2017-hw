@@ -12,7 +12,7 @@ We will make that information clear by showcasing scenarios in which we pipeline
 
 ## Research questions
 
-Is there a big emotional contrast, in Twiter, comparing *before* and *after* a conflict arises?
+How to quantify emotional contrast, in Twiter, comparing *before* and *after* a conflict arises?
 
 If so, is this more noticeable for certain categories of conflicts? Or does this vary by location?
 
@@ -24,7 +24,7 @@ We opted to use two datasets:
 This dataset covers individual events of organized violence. We consider a subset of the conflicts in this dataset, and keep the relevant information for each of the conflicts.
 
 2. Twitter
-Through *Language Recognition*, we will only take into account the Tweets in English - so the emotions considered for our analysis are those of English-speaking Twitter users. We will also filter the dataset according to the date, keeping only the Tweets around certain time-frames.
+Through an in-depth analysis in order to parse the dataset and retrieve the desired content, we decided that the approach couldn't reach efficient results from a time-wise prospective. We therefore decided to implement our custom dataset generatet by the training of a Markov Chains based model.
 
 ### UCDP
 
@@ -33,12 +33,12 @@ Through *Language Recognition*, we will only take into account the Tweets in Eng
 
 ### Twitter
 
-  * We plan on keeping only the Tweets in English published a couple days away (before and after) from the kept conflicts' start dates.
-  * After the initial filtering, we need only the Tweets' *content* and their *date* (discarding any other information).
+  * We delivered a complete parsing job on the Twitter dataset provided, only to realize that results could't get delivered efficiently (time-wise). We have nevertheless implemented an entire collection of Scripts to process the data via Spark that can be see in the Spark directory of the Project, complete with a full descriptive [README](https://github.com/nunomota/ada2017-hw/blob/master/project/spark/README.md) file of the overall process. 
+  * In order to obtain a population of Twitter samples we have opted for a model that, based on Markov Chains, generated samples on themes it was trained on. We provided those latters as a collection of stories, geo-political and religious texts to obtain content in line with the needs.
+  * The *Language Recognition (LR)* module is used to retrieve only samples that are in English. It's important to note we made the assumption that the content of English Tweets alone is a good representation of the world's overall opinion.
   * For each time-frame, we do **Named Entity Recognition** (NER) to figure out the country it is talking about - discard all that don't mention countries of conflict.
   * For the remaining Tweets, we apply **Sentiment Analysis** on the text and store that information alongside the Tweets.
   * We then define the **Sentimental Impact** as a measure that reflects the contrast between the average daily *sentiment strength* before and after the conflict.
-  * We now use this information to train our model, that we will use to predict the **Sentiment Impact** for certain conflicts (either real or hypothetical).
 
 ## Named Entity Recognition
 For **Named Entity Recognition** we make use of a **Natural Language Processing** library called [Spacy](https://spacy.io/). With it, we use each country's *code*, *name*, *cities*, *common denomination*, *nationality*, *currency* and an estimate of its *religious affiliation* ratios for identifying the country that is being talked about in a Tweet (if there is one). For everything except the *religious affiliations*, we will use [mledoze's dataset](https://mledoze.github.io/countries/) and [maxmind's dataset](https://www.maxmind.com/de/free-world-cities-database). For the last component, we will simply consider the most common affiliations and from [globalreligiousfutures dataset](http://globalreligiousfutures.org/explorer#/?subtopic=15&chartType=map&year=2010&data_type=number&religious_affiliation=55&destination=to&countries=Worldwide&age_group=all&gender=all&pdfMode=false).
@@ -50,10 +50,12 @@ For **Sentiment Analysis** we use [NLTK's Vader sentiment analyzer](http://www.n
 
 Although the main part of the project can be seen in the [project notebook](https://github.com/nunomota/ada2017-hw/blob/master/project/project.ipynb), there are other important directories than contain interesting information:
 
-* [parsers](https://github.com/nunomota/ada2017-hw/tree/master/project/parsers): Contains notebooks specifically designed to parse, filter and format the data from the used datasets
+* [parsers](https://github.com/nunomota/ada2017-hw/tree/master/project/parsers): Contains notebooks specifically designed to parse and format the data from the used datasets
 * [analyzers](https://github.com/nunomota/ada2017-hw/tree/master/project/analyzers): Contains notebooks that perform exploratory analysis on parsed datasets (to either help with feature selection or categorization)
+* [filters](https://github.com/nunomota/ada2017-hw/tree/master/project/filters): Contains notebooks designed to filters the data parsed in a previous step
 * [scripts](https://github.com/nunomota/ada2017-hw/tree/master/project/parsers): Contains python scripts to be used as modules for several steps of the project
 * [data](https://github.com/nunomota/ada2017-hw/tree/master/project/data): Contains both the *raw* and *parsed* datasets generated by our notebooks - for memory concerns, the *raw* directory is zipped
+* [spark](https://github.com/nunomota/ada2017-hw/tree/master/project/spark) : Contains python scripts used to attempt to retrieve the data from the Spark Cluster
 * [report](https://github.com/nunomota/ada2017-hw/tree/master/project/report): Contains the report for the project
 
 ## Completed Milestones
